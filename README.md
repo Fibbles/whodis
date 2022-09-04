@@ -24,7 +24,7 @@ login for notes to start showing when you use the addon for the first time.
  
 ## Commands
 
-The most commonly used commands are listed here, however there are more available in the readme and in-game help.
+The most commonly used commands are listed here, however there are more available via the in-game help.
 
 Character names are not case sensitive and are assumed to be on your realm. If you specify the realm then the character name and realm are case sensitive.
 
