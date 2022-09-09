@@ -1,8 +1,8 @@
-## Interface: 11403
+## Interface: 30400
 ## Title: Who Dis
 ## Notes: New alt, who dis? An addon that displays notes alongside character names in chat and tooltips.
 ## Author: Kallisto
-## Version: 1.12
+## Version: 1.13
 ## SavedVariables: WHODIS_ADDON_DATA
 ## SavedVariablesPerCharacter: WHODIS_ADDON_DATA_CHAR
 

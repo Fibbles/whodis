@@ -68,6 +68,12 @@ function WHODIS_NS.msg_help()
 
 	print("------")
 
+	print([[/whodis note-filter bool
+-- if set to true the addon will remove variations of 'alt' and 'main' from the end of guild notes (off by default)
+-- true or false]])
+
+	print("------")
+
 	print([[/whodis colour-names bool
 -- if the addon can recognise a note as a guild member's name it will colour the note based on their class
 -- true or false]])

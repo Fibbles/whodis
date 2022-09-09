@@ -40,6 +40,10 @@ Character names are not case sensitive and are assumed to be on your realm. If y
 - removes any custom note and displays the default guild note (if there is one)
  
 
+`/whodis note-filter bool`
+- if set to true the addon will remove variations of 'alt' and 'main' from the end of guild notes (off by default)
+- true or false
+
 `/whodis rank-filter RankName`
 - set a filter to only show notes for guildies with this rank (off by default)
 - if your guild roster is well organised you may only want to display notes against players with rank 'alt'

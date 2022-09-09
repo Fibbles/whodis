@@ -21,6 +21,23 @@ local function whodis_poll_guild_roster(silent)
 	
 	for iii = 1, num_members do
 		local name, rank, _, _, class, _, note = GetGuildRosterInfo(iii)
+				
+		if WHODIS_ADDON_DATA.NOTE_FILTER then
+			-- e.g. convert "Kallisto's alt" to "Kallisto"
+			note = gsub(note, "'s ALT$", "")
+			note = gsub(note, "'s Alt$", "")
+			note = gsub(note, "'s alt$", "")
+			note = gsub(note, " ALT$", "")
+			note = gsub(note, " Alt$", "")
+			note = gsub(note, " alt$", "")
+			
+			note = gsub(note, "'s MAIN$", "")
+			note = gsub(note, "'s Main$", "")
+			note = gsub(note, "'s main$", "")
+			note = gsub(note, " MAIN$", "")
+			note = gsub(note, " Main$", "")
+			note = gsub(note, " main$", "")
+		end
 		
 		-- keys are case sensitive
 		-- names include server name "Player-Server"
@@ -103,7 +120,7 @@ local function whodis_export_roster_as_overrides(remove_string)
 				-- dont export if a custom note already exists		
 				if WHODIS_ADDON_DATA.OVERRIDES[name] == nil then
 					
-					-- clear the remove_string from teh note before saving as an override
+					-- clear the remove_string from the note before saving as an override
 					-- useful if your GM formats the notes as 'SomeAltName alt' you can pass ' alt' as the remove_string
 					if remove_string and remove_string ~= '' then
 						note = WHODIS_NS.trim(gsub(note, remove_string, ""))

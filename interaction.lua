@@ -110,7 +110,7 @@ end
 
 -- Misc settings
 
-local function whodis_set_alt_rank(rank) -- pass nil to disable
+local function whodis_set_rank_filter(rank) -- pass nil to disable
 
 	if rank then
 		WHODIS_ADDON_DATA_CHAR.ALT_RANK = rank:lower()
@@ -121,7 +121,7 @@ local function whodis_set_alt_rank(rank) -- pass nil to disable
 	end
 end
 
-local function whodis_print_alt_rank()
+local function whodis_print_rank_filter()
 	
 	local rank = WHODIS_ADDON_DATA_CHAR.ALT_RANK
 	
@@ -130,6 +130,20 @@ local function whodis_print_alt_rank()
 	else
 		WHODIS_NS.msg_generic("No rank set. Showing guild notes for all guild members regardless of rank.")
 	end
+end
+
+local function whodis_note_filter(bool_str)
+
+	if not bool_str then
+		WHODIS_NS.warn_command()
+		return
+	end
+	
+	local bool = WHODIS_NS.str_to_bool(bool_str)
+
+	WHODIS_ADDON_DATA.NOTE_FILTER = bool
+	WHODIS_NS.msg_generic("Filtering of 'alt' and 'main' from the end of guild notes set to '" .. tostring(bool) .. "'.")
+	WHODIS_NS.build_roster(true)
 end
 
 local function whodis_colour_names(bool_str)
@@ -214,9 +228,11 @@ SlashCmdList.WHODIS = function(arg_str)
 		elseif command == "print-overrides" then -- print all overrides
 			whodis_print_overrides()
 		elseif command == "rank" or command == "rank-filter" then -- only show alt names for guildies with this rank (default is off)
-			whodis_set_alt_rank(args[2]) -- pass nil to disable and show notes for all guildies
+			whodis_set_rank_filter(args[2]) -- pass nil to disable and show notes for all guildies
 		elseif command == "print-rank" or command == "print-rank-filter" then -- check the current rank filter
-			whodis_print_alt_rank()
+			whodis_print_rank_filter()
+		elseif command == "note-filter" then -- filters various combination of 'alt' and 'main' from the end of guild notes
+			whodis_note_filter(args[2]) -- true or false
 		elseif command == "colour-names" then -- toggle name colouring
 			whodis_colour_names(args[2]) -- true or false
 		elseif command == "colour-brackets" then -- toggle bracket colouring
