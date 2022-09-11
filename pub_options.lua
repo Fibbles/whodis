@@ -32,7 +32,7 @@ WHODIS_NS.SLASH["rank"] = { deprecated = "rank-filter" }
 local function whodis_note_filter(bool_str)
 
 	if not bool_str then
-		WHODIS_NS.warn_command()
+		WHODIS_NS.warn_arguments_few()
 		return
 	end
 	
@@ -53,7 +53,7 @@ help = "If set to true, the addon will remove variations of 'alt' and 'main' fro
 local function whodis_colour_names(bool_str)
 
 	if not bool_str then
-		WHODIS_NS.warn_command()
+		WHODIS_NS.warn_arguments_few()
 		return
 	end
 	
@@ -74,7 +74,7 @@ help = "When set to true, if the addon can recognise a note as a guild member's 
 local function whodis_colour_brackets(bool_str)
 
 	if not bool_str then
-		WHODIS_NS.warn_command()
+		WHODIS_NS.warn_arguments_few()
 		return
 	end
 	
@@ -95,7 +95,7 @@ If false, it will leave them the same colour as the channel's text.]]
 local function whodis_hide_greeting(bool_str)
 
 	if not bool_str then
-		WHODIS_NS.warn_command()
+		WHODIS_NS.warn_arguments_few()
 		return
 	end
 	

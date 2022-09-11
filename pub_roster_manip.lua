@@ -11,7 +11,7 @@ end
 local function whodis_set_override(name, note)
 
 	if not name or name == "" then
-		WHODIS_NS.warn_command()
+		WHODIS_NS.warn_arguments_few()
 		return
 	end
 	
@@ -38,7 +38,7 @@ end
 local function whodis_set_override_parser(arg_str)
 	
 	if not arg_str or arg_str == "" then
-		WHODIS_NS.warn_command()
+		WHODIS_NS.warn_arguments_few()
 		return
 	end
 	
@@ -70,7 +70,7 @@ help = "Hide the character's note.\nCharacter name is not case sensitive unless 
 local function whodis_remove_override(name)
 
 	if not name then
-		WHODIS_NS.warn_command()
+		WHODIS_NS.warn_arguments_few()
 		return
 	end
 	

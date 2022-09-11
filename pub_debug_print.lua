@@ -27,7 +27,7 @@ help = "Print a list of characters we will display a note for (guild roster + ov
 local function whodis_print_player(name)
 
 	if not name then
-		WHODIS_NS.warn_command()
+		WHODIS_NS.warn_arguments_few()
 		return
 	end
 
