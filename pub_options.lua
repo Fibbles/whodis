@@ -64,7 +64,7 @@ local function whodis_colour_names(bool_str)
 	WHODIS_NS.build_roster(true)
 end
 
-WHODIS_NS.SLASH["colour_names"] = { 
+WHODIS_NS.SLASH["colour-names"] = { 
 func = whodis_colour_names,
 arg_str = "True/False",
 help = "When set to true, if the addon can recognise a note as a guild member's name it will colour the note based on their class."
@@ -84,7 +84,7 @@ local function whodis_colour_brackets(bool_str)
 	WHODIS_NS.msg_generic("Bracket colouring set to '" .. tostring(bool) .. "'.")
 end
 
-WHODIS_NS.SLASH["colour_brackets"] = {
+WHODIS_NS.SLASH["colour-brackets"] = {
 func = whodis_colour_brackets,
 arg_str = "True/False",
 help = [[If set to true, the addon will colour the brackets around the note grey.
