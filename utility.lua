@@ -56,7 +56,7 @@ local function split_first_word_from_str(str)
 
 	-- trim any leading white space to work around edge cases
 	-- without this a string of "  foo" ends up with both word and remainder being "foo"
-	local local_str = str--trim(str)
+	local local_str = trim(str)
 
 	local word = local_str:match("%S+")
 
