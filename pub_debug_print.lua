@@ -91,7 +91,7 @@ end
 WHODIS_NS.SLASH["print-options"] = {
 func = whodis_print_options,
 dev = true,
-help = "Print a list all addon options and their current values."
+help = "Print a list of all addon options and their current values."
 }
 WHODIS_NS.SLASH["print-rank-filter"] = {
 dev = true,

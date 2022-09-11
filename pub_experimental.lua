@@ -47,7 +47,8 @@ WHODIS_NS.SLASH["export-roster"] = {
 func = whodis_export_roster_as_overrides,
 dev = true,
 arg_str = "RemoveString",
-help = [[Take all guild notes and set them as custom notes if a custom notes doesn't already exist for that character.
+help = [[EXPERIMENTAL - MAY HAVE BUGS
+Take all guild notes and set them as custom notes (if a custom note doesn't already exist for that character).
 Optionally pass a 'RemoveString'. This will be removed from the guild note before exporting.
 You may want to use this command if you are changing guilds so that you retain your old guild's character notes.]]
 }
