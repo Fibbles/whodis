@@ -32,6 +32,10 @@ local function whodis_initialiser()
 		WHODIS_ADDON_DATA.HIDE_GREETING = false
 	end
 	
+	if WHODIS_ADDON_DATA.NOTE_FILTER == nil then
+		WHODIS_ADDON_DATA.NOTE_FILTER = true
+	end
+	
 	if not WHODIS_ADDON_DATA_CHAR then
 		WHODIS_ADDON_DATA_CHAR = { }
 	end

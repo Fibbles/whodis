@@ -69,23 +69,35 @@ help = "Print a list of characters with custom notes."
 }
 
 
-local function whodis_print_rank_filter()
+local function whodis_print_options()
 	
-	local rank = WHODIS_ADDON_DATA_CHAR.ALT_RANK
+	WHODIS_NS.msg_generic("Account wide options are currently set as:")
 	
-	if rank then
-		WHODIS_NS.msg_generic("Only showing guild notes for guild members with the rank '" .. rank .. "'.")
-	else
-		WHODIS_NS.msg_generic("No rank filter set. Showing guild notes for all guild members regardless of rank.")
+	for key, value in pairs(WHODIS_ADDON_DATA) do
+		if type(value) ~= "table" then
+			print(key .. " : " .. tostring(value))
+		end
+	end
+	
+	WHODIS_NS.msg_generic("Per character options are currently set as:")
+	
+	for key, value in pairs(WHODIS_ADDON_DATA_CHAR) do
+		if type(value) ~= "table" then
+			print(key .. " : " .. tostring(value))
+		end
 	end
 end
 
-WHODIS_NS.SLASH["print-rank-filter"] = {
-func = whodis_print_rank_filter,
+WHODIS_NS.SLASH["print-options"] = {
+func = whodis_print_options,
 dev = true,
-help = "Check what the current rank filter is set to."
+help = "Print a list all addon options and their current values."
+}
+WHODIS_NS.SLASH["print-rank-filter"] = {
+dev = true,
+deprecated = "print-options"
 }
 WHODIS_NS.SLASH["print-rank"] = { 
 dev = true,
-deprecated = "print-rank-filter"
+deprecated = "print-options"
 }

@@ -41,7 +41,7 @@ Character names are not case sensitive and are assumed to be on your realm. If y
  
 
 `/whodis note-filter bool`
-- if set to true the addon will remove variations of 'alt' and 'main' from the end of guild notes (off by default)
+- if set to true the addon will remove variations of 'alt' and 'main' from the end of guild notes
 - true or false
 
 `/whodis rank-filter RankName`

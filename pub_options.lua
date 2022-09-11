@@ -46,7 +46,7 @@ end
 WHODIS_NS.SLASH["note-filter"] = {
 func = whodis_note_filter,
 arg_str = "True/False",
-help = "If set to true, the addon will remove variations of 'alt' and 'main' from the end of guild notes (off by default)."
+help = "If set to true, the addon will remove variations of 'alt' and 'main' from the end of guild notes."
 }
 
 
