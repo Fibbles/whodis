@@ -31,7 +31,7 @@ local function whodis_print_help_single(command)
 	end
 end
 
-local function whodis_print_help(command, ...)
+local function whodis_print_help(command, show_dev)
 
 	if command then
 		WHODIS_NS.msg_generic("Displaying help for the command [" .. command .. "] if it exists.")
@@ -39,10 +39,13 @@ local function whodis_print_help(command, ...)
 	else
 		WHODIS_NS.msg_generic("Displaying help for all commands.")
 		
-		for key, _ in pairs(WHODIS_NS.SLASH) do
-			print(" ")
-			print("Command: " .. key)
-			whodis_print_help_single(key)
+		for key, val in pairs(WHODIS_NS.SLASH) do
+		
+			if not val.dev or (val.dev and show_dev) then
+				print(" ")
+				print("Command: " .. key)
+				whodis_print_help_single(key)
+			end
 		end
 	end
 end
@@ -51,5 +54,16 @@ WHODIS_NS.SLASH["help"] = {
 func = whodis_print_help,
 arg_str = "Command",
 help = [[Type '/whodis help' for a full list of commands.
+Type '/whodis help command' to view help only for that command.]]
+}
+
+local function whodis_print_help_dev(command)
+	whodis_print_help(command, true)
+end
+
+WHODIS_NS.SLASH["help-debug"] = {
+func = whodis_print_help_dev,
+help = [[Shows less commonly used commands that are still useful for debugging.
+Type '/whodis help-debug' for a full list of debug commands.
 Type '/whodis help command' to view help only for that command.]]
 }

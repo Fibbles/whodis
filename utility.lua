@@ -36,7 +36,7 @@ WHODIS_NS.name_has_realm = name_has_realm
 
 -- trim whitespace from the beginning and end of a string
 local function trim(str)
-   return (str:gsub("^%s*(.-)%s*$", "%1"))
+   return s:match "^%s*(.-)%s*$"
 end
 
 WHODIS_NS.trim = trim
@@ -51,3 +51,35 @@ local function str_to_bool(str)
 end
 
 WHODIS_NS.str_to_bool = str_to_bool
+
+local function split_first_word_from_str(str)
+
+	-- trim any leading white space to work around edge cases
+	-- without this a string of "  foo" ends up with both word and remainder being "foo"
+	local local_str = trim(str)
+
+	local word = local_str:match("%S+")
+
+	local remainder = local_str:sub(word:len() + 2)
+	
+	-- get rid of leading any white space
+	-- using an offset of 2 in sub (above) is not enough as there may be multiple spaces between the first and next word
+	remainder = trim(remainder)
+	
+	return word, remainder
+end
+
+WHODIS_NS.split_first_word_from_str = split_first_word_from_str
+
+local function split_all_words_from_str(str)
+
+	local word_array = {}
+	
+	for word in str:gmatch("%S+") do
+		table.insert(word_array, word)
+	end
+	
+	return word_array
+end
+
+WHODIS_NS.split_all_words_from_str = split_all_words_from_str

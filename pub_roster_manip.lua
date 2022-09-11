@@ -10,7 +10,7 @@ end
 
 local function whodis_set_override(name, note)
 
-	if not name then
+	if not name or name == "" then
 		WHODIS_NS.warn_command()
 		return
 	end
@@ -35,22 +35,16 @@ local function whodis_set_override(name, note)
 	WHODIS_NS.build_roster(true)
 end
 
-local function whodis_set_override_parser(name, ...)
+local function whodis_set_override_parser(arg_str)
 	
-	if (arg == nil or arg.n == 0) then
-		whodis_set_override(name, nil)
-	elseif arg.n == 1 then
-		whodis_set_override(name, arg[1])
-	else
-		-- rebuild note string, individual words are passed as arguments
-		note = arg[1]
-		
-		for iii = 2, arg.n do
-			note = note .. " " .. arg[iii]
-		end
-		
-		whodis_set_override(name, note)
+	if not arg_str or arg_str == "" then
+		WHODIS_NS.warn_command()
+		return
 	end
+	
+	name, note = WHODIS_NS.split_first_word_from_str(arg_str)
+	
+	whodis_set_override(name, note)
 end
 
 WHODIS_NS.SLASH["set"] = {
@@ -62,7 +56,7 @@ Character name is not case sensitive unless you specify a realm.]]
 }
 
 
-local function whodis_hide_note(name, ...)
+local function whodis_hide_note(name)
 	whodis_set_override(name, nil)
 end
 
@@ -73,7 +67,7 @@ help = "Hide the character's note.\nCharacter name is not case sensitive unless 
 }
 
 
-local function whodis_remove_override(name, ...)
+local function whodis_remove_override(name)
 
 	if not name then
 		WHODIS_NS.warn_command()
@@ -100,7 +94,7 @@ Character name is not case sensitive unless you specify a realm.]]
 WHODIS_NS.SLASH["remove"] = { deprecated = "default" }
 
 
-local function whodis_reset(...)
+local function whodis_reset()
 
 	WHODIS_ADDON_DATA_CHAR.ROSTER = { }
 	WHODIS_ADDON_DATA.OVERRIDES = { }
@@ -114,7 +108,7 @@ Be sure you want to call this because once your notes are gone, they can't be re
 }
 
 
-local function whodis_populate(...)
+local function whodis_populate()
 
 	GuildRoster()
 	WHODIS_NS.warn_generic("Forced an update of the guild roster. This is rate limited to once every 10 seconds by Blizzard so may not have been successful.")
