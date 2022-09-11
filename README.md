@@ -4,10 +4,10 @@
 
 ## What is it?
 
-A small World of Warcraft addon to display notes besides character names in chat and tooltips.
+A small addon to display notes besides character names in chat and tooltips.
 It will pull information from the guild notes by default but these can be overridden with custom notes.
-The main purpose of this addon is to display main character names alongside alts, however
-you can use it to set any note you like against a player, in any guild, on any server.
+The main purpose of this addon is to display your guild's main character names alongside alts.
+However you can use it to set a custom note against any player, in any guild, on any server.
 
 
 ## Limitations
