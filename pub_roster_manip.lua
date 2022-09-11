@@ -49,7 +49,7 @@ end
 
 WHODIS_NS.SLASH["set"] = {
 func = whodis_set_override_parser,
-arg_str = "CharName, Note",
+arg_str = "CharName Note",
 help = [[Set a custom note.
 If the character is a guildie this will override the default guild note.
 Character name is not case sensitive unless you specify a realm.]]

@@ -85,4 +85,7 @@ func = whodis_print_rank_filter,
 dev = true,
 help = "Check what the current rank filter is set to."
 }
-WHODIS_NS.SLASH["print-rank"] = { deprecated = "print-rank-filter" }
+WHODIS_NS.SLASH["print-rank"] = { 
+dev = true,
+deprecated = "print-rank-filter"
+}

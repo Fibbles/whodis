@@ -20,6 +20,10 @@ SlashCmdList.WHODIS = function(raw_arg_str)
 	
 	command, arguments = WHODIS_NS.split_first_word_from_str(raw_arg_str)
 	
+	if arguments == "" then
+		arguments = nil
+	end
+	
 	local command_struct = WHODIS_NS.SLASH[command:lower()]
 			
 	if not command_struct then

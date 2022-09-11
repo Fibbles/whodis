@@ -19,15 +19,15 @@ WHODIS_NS.msg_generic = whodis_msg_generic
 
 
 function WHODIS_NS.warn_command()
-	whodis_warn_generic("Please pass a valid command. Try '/whodis help' or see the readme for details.")
+	whodis_warn_generic("Please pass a valid command. Try [ /whodis help ] or see the readme for details.")
 end
 
 function WHODIS_NS.warn_arguments_few()
-	whodis_warn_generic("Too few arguments for this command. Try '/whodis help' or see the readme for details.")
+	whodis_warn_generic("Too few arguments for this command. Try [ /whodis help ] or see the readme for details.")
 end
 
 function WHODIS_NS.warn_arguments_many()
-	whodis_warn_generic("Too many arguments for this command. Try '/whodis help' or see the readme for details.")
+	whodis_warn_generic("Too many arguments for this command. Try [ /whodis help ] or see the readme for details.")
 end
 
 
