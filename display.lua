@@ -107,8 +107,20 @@ GameTooltip:HookScript("OnTooltipSetUnit", function(self)
 	
 	-- the tooltip hook could in theory be called before the addon is fully initialised
 	if WHODIS_NS.INITIALISED then
-	
-		local unit_name = self:GetUnit()
+			
+		-- the tooltip's GetUnit method does return unit_name as the first value but it doesn't contain the realm name
+		-- unit is mostly 'mouseover' for tooltips but might bear 'raidN' if hovering over raid frames etc
+		local _, unit = self:GetUnit()
+
+		if (not unit or not UnitExists(unit)) then 
+			return
+		end
+		
+		local unit_name, unit_realm = UnitName(unit)
+		
+		if unit_realm and unit_realm ~= "" then
+			unit_name = unit_name .. "-" .. unit_realm
+		end
 		
 		if unit_name then
 			
