@@ -30,6 +30,10 @@ function WHODIS_NS.warn_arguments_many()
 	whodis_warn_generic("Too many arguments for this command. Try [ /whodis help ] or see the readme for details.")
 end
 
+function WHODIS_NS.warn_arguments_invalid()
+	whodis_warn_generic("Invalid arguments for this command. Try [ /whodis help ] or see the readme for details.")
+end
+
 
 
 function WHODIS_NS.msg_init(addon_version)

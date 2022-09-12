@@ -29,18 +29,32 @@ Leave RankName blank to disable this filter and show notes for all guildies.]]
 WHODIS_NS.SLASH["rank"] = { deprecated = "rank-filter" }
 
 
-local function whodis_note_filter(bool_str)
+local function bool_str_parser(bool_str)
 
 	if not bool_str then
 		WHODIS_NS.warn_arguments_few()
-		return
+		return nil
 	end
 	
 	local bool = WHODIS_NS.str_to_bool(bool_str)
 
-	WHODIS_ADDON_DATA.NOTE_FILTER = bool
-	WHODIS_NS.msg_generic("Filtering of 'alt' and 'main' from the end of guild notes set to '" .. tostring(bool) .. "'.")
-	WHODIS_NS.build_roster(true)
+	if bool == nil then
+		WHODIS_NS.warn_arguments_invalid()
+	end
+
+	return bool
+end
+
+
+local function whodis_note_filter(bool_str)
+
+	local bool = bool_str_parser(bool_str)
+
+	if bool ~= nil then
+		WHODIS_ADDON_DATA.NOTE_FILTER = bool
+		WHODIS_NS.msg_generic("Filtering of 'alt' and 'main' from the end of guild notes set to '" .. tostring(bool) .. "'.")
+		WHODIS_NS.build_roster(true)
+	end
 end
 
 WHODIS_NS.SLASH["note-filter"] = {
@@ -52,16 +66,13 @@ help = "If set to true, the addon will remove variations of 'alt' and 'main' fro
 
 local function whodis_colour_names(bool_str)
 
-	if not bool_str then
-		WHODIS_NS.warn_arguments_few()
-		return
-	end
-	
-	local bool = WHODIS_NS.str_to_bool(bool_str)
+	local bool = bool_str_parser(bool_str)
 
-	WHODIS_ADDON_DATA.COLOUR_NAMES = bool
-	WHODIS_NS.msg_generic("Name colouring set to '" .. tostring(bool) .. "'.")
-	WHODIS_NS.build_roster(true)
+	if bool ~= nil then
+		WHODIS_ADDON_DATA.COLOUR_NAMES = bool
+		WHODIS_NS.msg_generic("Name colouring set to '" .. tostring(bool) .. "'.")
+		WHODIS_NS.build_roster(true)
+	end
 end
 
 WHODIS_NS.SLASH["colour-names"] = { 
@@ -73,15 +84,12 @@ help = "When set to true, if the addon can recognise a note as a guild member's 
 
 local function whodis_colour_brackets(bool_str)
 
-	if not bool_str then
-		WHODIS_NS.warn_arguments_few()
-		return
-	end
-	
-	local bool = WHODIS_NS.str_to_bool(bool_str)
+	local bool = bool_str_parser(bool_str)
 
-	WHODIS_ADDON_DATA.COLOUR_BRACKETS = bool
-	WHODIS_NS.msg_generic("Bracket colouring set to '" .. tostring(bool) .. "'.")
+	if bool ~= nil then
+		WHODIS_ADDON_DATA.COLOUR_BRACKETS = bool
+		WHODIS_NS.msg_generic("Bracket colouring set to '" .. tostring(bool) .. "'.")
+	end
 end
 
 WHODIS_NS.SLASH["colour-brackets"] = {
@@ -93,16 +101,13 @@ If false, it will leave them the same colour as the channel's text.]]
 
 
 local function whodis_hide_greeting(bool_str)
-
-	if not bool_str then
-		WHODIS_NS.warn_arguments_few()
-		return
-	end
 	
-	local bool = WHODIS_NS.str_to_bool(bool_str)
+	local bool = bool_str_parser(bool_str)
 
-	WHODIS_ADDON_DATA.HIDE_GREETING = bool
-	WHODIS_NS.msg_generic("Hide addon messages during load is now set to '" .. tostring(bool) .. "'.")
+	if bool ~= nil then
+		WHODIS_ADDON_DATA.HIDE_GREETING = bool
+		WHODIS_NS.msg_generic("Hide addon messages during load is now set to '" .. tostring(bool) .. "'.")
+	end
 end
 
 WHODIS_NS.SLASH["hide-greeting"] = {
