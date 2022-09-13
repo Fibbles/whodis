@@ -13,8 +13,8 @@ SlashCmdList.WHODIS = function(raw_arg_str)
 	-- raw_arg_str is everything that appears after /whodis
 	
 	if not raw_arg_str or raw_arg_str == '' then
-		-- no command passed
-		WHODIS_NS.warn_command()
+		-- no command passed, open the gui instead
+		WHODIS_NS.open_settings_frame()
 		return
 	end
 	

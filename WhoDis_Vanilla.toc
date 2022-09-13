@@ -16,4 +16,5 @@ pub_help.lua
 pub_options.lua
 pub_roster_manip.lua
 pub_experimental.lua
+gui_settings.lua
 main.lua

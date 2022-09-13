@@ -10,11 +10,11 @@ end
 
 local function whodis_set_rank_filter(rank) -- pass nil to disable
 
-	if rank then
+	if rank and rank ~= "" then
 		WHODIS_ADDON_DATA_CHAR.ALT_RANK = rank:lower()
 		WHODIS_NS.msg_generic("Only showing guild notes for guild members with the rank '" .. rank .. "'.")
 	else
-		WHODIS_ADDON_DATA_CHAR.ALT_RANK = rank
+		WHODIS_ADDON_DATA_CHAR.ALT_RANK = nil
 		WHODIS_NS.msg_generic("Showing guild notes for all guild members regardless of rank.")
 	end
 end

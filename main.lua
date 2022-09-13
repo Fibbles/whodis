@@ -58,6 +58,8 @@ local function whodis_initialiser()
 	GuildRoster()
 	
 	WHODIS_NS.register_chat_filters()
+	
+	WHODIS_NS.create_settings_frame()
 
 	if not WHODIS_ADDON_DATA.HIDE_GREETING then
 		local addon_version = GetAddOnMetadata(ADDON_NAME, "Version")
@@ -113,6 +115,7 @@ function whodis_event_frame:on_update(since_last_update)
 		end
 	end
 end
+
 whodis_event_frame:SetScript("OnUpdate", whodis_event_frame.on_update)
 
 
