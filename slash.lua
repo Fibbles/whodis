@@ -14,7 +14,7 @@ SlashCmdList.WHODIS = function(raw_arg_str)
 	
 	if not raw_arg_str or raw_arg_str == '' then
 		-- no command passed, open the gui instead
-		WHODIS_NS.open_settings_frame()
+		WHODIS_NS.open_gui_frame()
 		return
 	end
 	

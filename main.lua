@@ -59,7 +59,7 @@ local function whodis_initialiser()
 	
 	WHODIS_NS.register_chat_filters()
 	
-	WHODIS_NS.create_settings_frame()
+	WHODIS_NS.create_gui_frames()
 
 	if not WHODIS_ADDON_DATA.HIDE_GREETING then
 		local addon_version = GetAddOnMetadata(ADDON_NAME, "Version")

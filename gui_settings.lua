@@ -184,7 +184,7 @@ local function whodis_create_note_setter(parent_frame, anchor_frame, y_offset)
 end
 
 
-local function whodis_create_note_row(parent_frame, anchor_frame, y_offset)
+local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_rows)
 	
 	local x_padding = 10
 	local row_width = parent_frame:GetWidth()
@@ -212,18 +212,26 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset)
 	row_frame.note_eb:SetText("Some Note")
 	row_frame.note_eb:SetCursorPosition(0)
 	
+
 	local function cancel_edit(self)
 		self:ClearFocus()
+		self:SetText(self.read_only_text)
+		self:SetCursorPosition(0)
 	end
 		
 	row_frame.note_eb:SetScript("OnEscapePressed", cancel_edit)
 	
 	
 	local function note_setter(self)
-		self:ClearFocus()
-		local name = self:GetParent().name_label:GetText()
-		local note = self:GetParent().note_eb:GetText()
+		local row_frame = self:GetParent()
+		row_frame.note_eb:ClearFocus()
+		
+		local name = row_frame.name_label:GetText()
+		local note = row_frame.note_eb:GetText()
 		WHODIS_NS.SLASH["set"].func((name or "") .. " " .. (note or ""))
+		
+		local grid_frame = row_frame:GetParent()
+		WHODIS_NS.update_gui_note_grid(grid_frame, grid_frame.current_page)
 	end
 	
 	row_frame.note_eb:SetScript("OnEnterPressed", note_setter)
@@ -239,22 +247,46 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset)
 	row_frame.default_button:SetPoint("LEFT", row_frame.set_button, "RIGHT", 0, 0)
 	row_frame.default_button:SetText("Default")
 	row_frame.default_button:SetWidth(60)
-	--row_frame.default_button:SetScript("OnClick", note_setter)
+	
+	local function note_default(self)
+		local row_frame = self:GetParent()
+		row_frame.note_eb:ClearFocus()
+		
+		local name = row_frame.name_label:GetText()
+		WHODIS_NS.SLASH["default"].func(name or "")
+		
+		local grid_frame = row_frame:GetParent()
+		WHODIS_NS.update_gui_note_grid(grid_frame, grid_frame.current_page)
+	end
+	
+	row_frame.default_button:SetScript("OnClick", note_default)
 
 	row_frame.hide_button = CreateFrame("Button", nil, row_frame, "UIPanelButtonTemplate")
 	row_frame.hide_button:SetPoint("LEFT", row_frame.default_button, "RIGHT", 0, 0)
 	row_frame.hide_button:SetText("Hide")
 	row_frame.hide_button:SetWidth(40)
+	
+	local function note_hide(self)
+		local row_frame = self:GetParent()
+		row_frame.note_eb:ClearFocus()
+		
+		local name = row_frame.name_label:GetText()
+		WHODIS_NS.SLASH["hide"].func(name or "")
+		
+		local grid_frame = row_frame:GetParent()
+		WHODIS_NS.update_gui_note_grid(grid_frame, grid_frame.current_page)
+	end
+	
+	row_frame.hide_button:SetScript("OnClick", note_hide)
 
 	return row_frame
 end
 
-local function whodis_create_note_grid(parent_frame, anchor_frame, y_offset)
+local function whodis_create_note_grid(parent_frame, anchor_frame, y_offset, num_rows)
 
 	local x_padding = 10
 	local grid_width = 600
 	local grid_height = 200
-	local num_rows = 10
 	
 	local grid_frame = CreateFrame("Frame", nil, parent_frame)
 	grid_frame:SetPoint("TOPLEFT", anchor_frame, "BOTTOMLEFT", 0, y_offset)
@@ -279,6 +311,8 @@ local function whodis_create_note_grid(parent_frame, anchor_frame, y_offset)
 	
 	local last_anchor = grid_frame.note_setter
 	
+	grid_frame.page_size = num_rows
+	
 	for iii = 1, num_rows do
 		local current_row = whodis_create_note_row(grid_frame, last_anchor, 0)
 		last_anchor = current_row
@@ -286,37 +320,36 @@ local function whodis_create_note_grid(parent_frame, anchor_frame, y_offset)
 	end
 
 
+	grid_frame.page_num_label = grid_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
+	grid_frame.page_num_label:SetJustifyH("CENTER")
+	grid_frame.page_num_label:SetPoint("TOP", last_anchor, "BOTTOM", 0, -15)
+	grid_frame.page_num_label:SetText("Page Num")
+	grid_frame.page_num_label:SetWidth(80)
+	
 	grid_frame.prev_button = CreateFrame("Button", nil, grid_frame, "UIPanelButtonTemplate")
-	grid_frame.prev_button:SetPoint("TOPLEFT", last_anchor, "BOTTOMLEFT", 0, 0)
+	grid_frame.prev_button:SetPoint("RIGHT", grid_frame.page_num_label, "LEFT", 0, 0)
 	grid_frame.prev_button:SetText("Previous")
 	grid_frame.prev_button:SetWidth(80)
 	
 	local function prev_page(self)
-		WHODIS_NS.update_settings_note_grid(self:GetParent().current_page - 1, 10)
+		WHODIS_NS.update_gui_note_grid(self:GetParent(), self:GetParent().current_page - 1)
 	end
 	grid_frame.prev_button:SetScript("OnClick", prev_page)
-	
-	grid_frame.page_num_label = grid_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
-	grid_frame.page_num_label:SetJustifyH("CENTER")
-	grid_frame.page_num_label:SetPoint("LEFT", grid_frame.prev_button, "RIGHT", x_padding, 0)
-	grid_frame.page_num_label:SetText("Page Num")
-	grid_frame.page_num_label:SetWidth(80)
 
 	grid_frame.next_button = CreateFrame("Button", nil, grid_frame, "UIPanelButtonTemplate")
-	grid_frame.next_button:SetPoint("LEFT", grid_frame.page_num_label, "RIGHT", x_padding, 0)
+	grid_frame.next_button:SetPoint("LEFT", grid_frame.page_num_label, "RIGHT", 0, 0)
 	grid_frame.next_button:SetText("Next")
 	grid_frame.next_button:SetWidth(80)
 	
 	local function next_page(self)
-		WHODIS_NS.update_settings_note_grid(self:GetParent().current_page + 1, 10)
+		WHODIS_NS.update_gui_note_grid(self:GetParent(), self:GetParent().current_page + 1)
 	end
 	grid_frame.next_button:SetScript("OnClick", next_page)
-
-
+	
 	return grid_frame
 end
 
-function WHODIS_NS.update_settings_note_grid(page_num, page_size)
+function WHODIS_NS.update_gui_note_grid(grid_frame, page_num)
 	
 	-- sort the roster alpabetically
 	
@@ -327,13 +360,16 @@ function WHODIS_NS.update_settings_note_grid(page_num, page_size)
 	table.sort(names)
 	
 	local num_names = table.getn(names)
-	WHODIS_NS.settings_frame.note_grid.num_names = num_names
+	grid_frame.num_names = num_names
+	
+	-- page size is set when the grid is created and shouldn't be altered after
+	local page_size = grid_frame.page_size
 	
 	local num_pages = math.ceil(num_names / page_size)
-	WHODIS_NS.settings_frame.note_grid.num_pages = num_pages
+	grid_frame.num_pages = num_pages
 	
 	page_num = math.max(1, math.min(page_num, num_pages))
-	WHODIS_NS.settings_frame.note_grid.current_page = page_num
+	grid_frame.current_page = page_num
 	
 	-- modulo with 1 based inclusive indexing really sucks
 	local begin_index = math.min(((page_num - 1) * page_size) + 1, num_names)
@@ -343,7 +379,7 @@ function WHODIS_NS.update_settings_note_grid(page_num, page_size)
 		
 		local row_num = ((iii - 1) % page_size) + 1
 		
-		local row = WHODIS_NS.settings_frame.note_grid.rows[row_num]
+		local row = grid_frame.rows[row_num]
 			
 		if iii <= end_index then
 			
@@ -354,6 +390,7 @@ function WHODIS_NS.update_settings_note_grid(page_num, page_size)
 			local rank, _, note = unpack(WHODIS_ADDON_DATA_CHAR.ROSTER[names[iii]])
 			
 			row.note_eb:SetText(note)
+			row.note_eb.read_only_text = note
 			row.note_eb:SetCursorPosition(0)
 			
 			-- custom notes always have rank of "n/a"
@@ -369,73 +406,96 @@ function WHODIS_NS.update_settings_note_grid(page_num, page_size)
 		end
 	end
 	
-	WHODIS_NS.settings_frame.note_grid.prev_button:Enable()
-	WHODIS_NS.settings_frame.note_grid.next_button:Enable()
+	grid_frame.prev_button:Enable()
+	grid_frame.next_button:Enable()
 	
 	if page_num == 1 then
-		WHODIS_NS.settings_frame.note_grid.prev_button:Disable()
+		grid_frame.prev_button:Disable()
 	end
 	
 	if page_num == num_pages then
-		WHODIS_NS.settings_frame.note_grid.next_button:Disable()
+		grid_frame.next_button:Disable()
 	end
 	
-	WHODIS_NS.settings_frame.note_grid.page_num_label:SetText(tostring(page_num) .. "/" .. tostring(num_pages))
+	grid_frame.page_num_label:SetText(tostring(page_num) .. "/" .. tostring(num_pages))
 end
 
-
--- Settings frame must created in a function as its children rely on data structures not present until after the addon initialises
-function WHODIS_NS.create_settings_frame()
+local function whodis_create_gui_title_header(parent_frame, x_offset, y_offset)
 
 	local display_name = "Who Dis" -- ADDON_NAME is not formatted with spaces
-
-	local settings_frame = CreateFrame("Frame")
-	settings_frame.name = display_name
-	
-	local x_offset = 20
-	local y_offset = -10
-	local y_section_padding = -40
-	
-	local title_label = settings_frame:CreateFontString(nil , "BORDER", "GameFontNormalLarge")
+		
+	local title_label = parent_frame:CreateFontString(nil , "BORDER", "GameFontNormalLarge")
 	title_label:SetJustifyH("LEFT")
-	title_label:SetPoint("TOPLEFT", settings_frame, "TOPLEFT", x_offset, y_offset)
+	title_label:SetPoint("TOPLEFT", parent_frame, "TOPLEFT", x_offset, y_offset)
 	title_label:SetText(display_name)
 	
-	local account_opts_label = settings_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
-	account_opts_label:SetJustifyH("LEFT")
-	account_opts_label:SetPoint("TOPLEFT", title_label, "TOPLEFT", 0, y_section_padding)
-	account_opts_label:SetText("Per Account Settings")
-
-	local bool_opt_anchor = whodis_create_bool_options(settings_frame, account_opts_label, y_offset)
-	
-	local char_opts_label = settings_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
-	char_opts_label:SetJustifyH("LEFT")
-	char_opts_label:SetPoint("TOPLEFT", bool_opt_anchor, "TOPLEFT", 0, y_section_padding)
-	char_opts_label:SetText("Per Character Settings")
-	
-	local text_opt_anchor = whodis_create_text_options(settings_frame, char_opts_label, y_offset)
-	
-	--local note_setter_anchor = whodis_create_note_setter(settings_frame, text_opt_anchor, y_section_padding)
-	
-	--local note_list_anchor = whodis_create_note_list(settings_frame, note_setter_anchor, y_section_padding)
-	
-	--local test_note_row = whodis_create_note_row(settings_frame, note_setter_anchor, y_section_padding)
-	
-	settings_frame.note_grid = whodis_create_note_grid(settings_frame, text_opt_anchor, y_section_padding)
-	
-	InterfaceOptions_AddCategory(settings_frame)
-	
-	WHODIS_NS.settings_frame = settings_frame
-	
-	WHODIS_NS.update_settings_note_grid(1, 10)
+	return title_label
 end
 
-function WHODIS_NS.open_settings_frame()
+local function whodis_create_gui_main_frame(parent_frame, x_offset, y_offset, y_section_padding)
+
+	local gui_main_frame = CreateFrame("Frame")
+	gui_main_frame.name = "Who Dis"
+	
+	local title_header = whodis_create_gui_title_header(gui_main_frame, x_offset, y_section_padding)
+		
+	local note_grid_page_size = 14
+		
+	gui_main_frame.note_grid = whodis_create_note_grid(gui_main_frame, title_header, y_section_padding, note_grid_page_size)
+	
+	--populate the grid
+	WHODIS_NS.update_gui_note_grid(gui_main_frame.note_grid, 1)
+	
+	InterfaceOptions_AddCategory(gui_main_frame)
+	
+	return gui_main_frame
+end
+
+local function whodis_create_gui_settings_frame(parent_frame, x_offset, y_offset, y_section_padding)
+
+	local gui_settings_frame = CreateFrame("Frame")
+	gui_settings_frame.name = "Settings"
+	gui_settings_frame.parent = parent_frame.name
+		
+	local title_header = whodis_create_gui_title_header(gui_settings_frame, x_offset, y_section_padding)
+	
+	local account_opts_label = gui_settings_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
+	account_opts_label:SetJustifyH("LEFT")
+	account_opts_label:SetPoint("TOPLEFT", title_header, "BOTTOMLEFT", 0, y_section_padding)
+	account_opts_label:SetText("Per Account Settings")
+
+	local bool_opt_anchor = whodis_create_bool_options(gui_settings_frame, account_opts_label, y_offset)
+	
+	local char_opts_label = gui_settings_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
+	char_opts_label:SetJustifyH("LEFT")
+	char_opts_label:SetPoint("TOPLEFT", bool_opt_anchor, "BOTTOMLEFT", 0, y_section_padding)
+	char_opts_label:SetText("Per Character Settings")
+	
+	local text_opt_anchor = whodis_create_text_options(gui_settings_frame, char_opts_label, y_offset)
+	
+	InterfaceOptions_AddCategory(gui_settings_frame)
+	
+	return gui_settings_frame
+end
+
+-- Settings frame must created in a function as its children rely on data structures not present until after the addon initialises
+function WHODIS_NS.create_gui_frames()
+
+	local x_offset = 20
+	local y_offset = -10
+	local y_section_padding = -20
+	
+	WHODIS_NS.gui_main_frame = whodis_create_gui_main_frame(nil, x_offset, y_offset, y_section_padding)
+	
+	WHODIS_NS.gui_settings_frame = whodis_create_gui_settings_frame(WHODIS_NS.gui_main_frame, x_offset, y_offset, y_section_padding)
+end
+
+function WHODIS_NS.open_gui_frame()
 
 	-- https://github.com/Stanzilla/WoWUIBugs/issues/89
-	InterfaceOptionsFrame_OpenToCategory(WHODIS_NS.settings_frame)
-	InterfaceOptionsFrame_OpenToCategory(WHODIS_NS.settings_frame) 
-	WHODIS_NS.settings_frame:Hide()
-	WHODIS_NS.settings_frame:Show() -- required to get lists to rebuild, open to category doesn't seem to trigger OnShow
+	InterfaceOptionsFrame_OpenToCategory(WHODIS_NS.gui_main_frame)
+	InterfaceOptionsFrame_OpenToCategory(WHODIS_NS.gui_main_frame) 
+	WHODIS_NS.gui_main_frame:Hide()
+	WHODIS_NS.gui_main_frame:Show() -- required to get lists to rebuild, open to category doesn't seem to trigger OnShow
 end
 
