@@ -165,9 +165,14 @@ local function whodis_create_note_setter(parent_frame, anchor_frame, y_offset)
 	
 	
 	local function note_setter()
-		name_eb:ClearFocus()
-		note_eb:ClearFocus()
 		WHODIS_NS.SLASH["set"].func((name_eb:GetText() or "") .. " " .. (note_eb:GetText() or ""))
+		
+		name_eb:ClearFocus()
+		name_eb:SetText("")
+		note_eb:ClearFocus()
+		note_eb:SetText("")
+		
+		WHODIS_NS.update_gui_note_grid(parent_frame, parent_frame.current_page)
 	end
 	
 	note_eb:SetScript("OnEnterPressed", note_setter)
@@ -223,15 +228,13 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	
 	
 	local function note_setter(self)
-		local row_frame = self:GetParent()
 		row_frame.note_eb:ClearFocus()
 		
 		local name = row_frame.name_label:GetText()
 		local note = row_frame.note_eb:GetText()
 		WHODIS_NS.SLASH["set"].func((name or "") .. " " .. (note or ""))
 		
-		local grid_frame = row_frame:GetParent()
-		WHODIS_NS.update_gui_note_grid(grid_frame, grid_frame.current_page)
+		WHODIS_NS.update_gui_note_grid(parent_frame, parent_frame.current_page)
 	end
 	
 	row_frame.note_eb:SetScript("OnEnterPressed", note_setter)
@@ -249,14 +252,12 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	row_frame.default_button:SetWidth(60)
 	
 	local function note_default(self)
-		local row_frame = self:GetParent()
 		row_frame.note_eb:ClearFocus()
 		
 		local name = row_frame.name_label:GetText()
 		WHODIS_NS.SLASH["default"].func(name or "")
 		
-		local grid_frame = row_frame:GetParent()
-		WHODIS_NS.update_gui_note_grid(grid_frame, grid_frame.current_page)
+		WHODIS_NS.update_gui_note_grid(parent_frame, parent_frame.current_page)
 	end
 	
 	row_frame.default_button:SetScript("OnClick", note_default)
@@ -267,14 +268,12 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	row_frame.hide_button:SetWidth(40)
 	
 	local function note_hide(self)
-		local row_frame = self:GetParent()
 		row_frame.note_eb:ClearFocus()
 		
 		local name = row_frame.name_label:GetText()
 		WHODIS_NS.SLASH["hide"].func(name or "")
 		
-		local grid_frame = row_frame:GetParent()
-		WHODIS_NS.update_gui_note_grid(grid_frame, grid_frame.current_page)
+		WHODIS_NS.update_gui_note_grid(parent_frame, parent_frame.current_page)
 	end
 	
 	row_frame.hide_button:SetScript("OnClick", note_hide)
