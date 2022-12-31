@@ -118,6 +118,7 @@ local function whodis_create_text_options(parent_frame, anchor_frame, y_offset)
 	btn:SetPoint("LEFT", eb, "RIGHT", x_padding, 0)
 	btn:SetText("Set")
 	btn:SetWidth(80)
+	btn.tooltipText = WHODIS_NS.SLASH["rank-filter"].help
 	
 	btn:SetScript("OnClick", rank_filter_setter)
 

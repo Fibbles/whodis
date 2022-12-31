@@ -23,8 +23,8 @@ WHODIS_NS.SLASH["rank-filter"] = {
 func = whodis_set_rank_filter,
 arg_str = "RankName",
 help = [[Only show notes for guildies with this rank (off by default).
-If your guild roster is well organised you may only want to display notes against players with rank 'alt' for example.
-Leave RankName blank to disable this filter and show notes for all guildies.]]
+You may only want to display notes against players with rank 'alt' for example.
+Leave the filter blank to disable it and show notes for all guildies.]]
 }
 WHODIS_NS.SLASH["rank"] = { deprecated = "rank-filter" }
 

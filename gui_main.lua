@@ -61,6 +61,7 @@ local function whodis_create_note_setter(parent_frame, anchor_frame, y_offset)
 	btn:SetPoint("LEFT", note_eb, "RIGHT", x_padding, 0)
 	btn:SetText("Set")
 	btn:SetWidth(40)
+	btn.tooltipText = WHODIS_NS.SLASH["set"].help
 	
 	btn:SetScript("OnClick", note_setter)
 
@@ -124,11 +125,13 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	row_frame.set_button:SetText("Set")
 	row_frame.set_button:SetWidth(40)
 	row_frame.set_button:SetScript("OnClick", note_setter)
+	row_frame.set_button.tooltipText = WHODIS_NS.SLASH["set"].help
 	
 	row_frame.default_button = CreateFrame("Button", nil, row_frame, "UIPanelButtonTemplate")
 	row_frame.default_button:SetPoint("LEFT", row_frame.set_button, "RIGHT", 0, 0)
 	row_frame.default_button:SetText("Default")
 	row_frame.default_button:SetWidth(60)
+	row_frame.default_button.tooltipText = WHODIS_NS.SLASH["default"].help
 	
 	local function note_default(self)
 		row_frame.note_eb:ClearFocus()
@@ -145,6 +148,7 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	row_frame.hide_button:SetPoint("LEFT", row_frame.default_button, "RIGHT", 0, 0)
 	row_frame.hide_button:SetText("Hide")
 	row_frame.hide_button:SetWidth(40)
+	row_frame.hide_button.tooltipText = WHODIS_NS.SLASH["hide"].help
 	
 	local function note_hide(self)
 		row_frame.note_eb:ClearFocus()

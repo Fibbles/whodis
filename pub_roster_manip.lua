@@ -52,6 +52,7 @@ func = whodis_set_override_parser,
 arg_str = "CharName Note",
 help = [[Set a custom note.
 If the character is a guildie this will override the default guild note.
+Custom notes are visible to all characters on this account.
 Character name is not case sensitive unless you specify a realm.]]
 }
 
@@ -63,7 +64,9 @@ end
 WHODIS_NS.SLASH["hide"] = {
 func = whodis_hide_note,
 arg_str = "CharName",
-help = "Hide the character's note.\nCharacter name is not case sensitive unless you specify a realm."
+help = [[Hide the character's note.
+Useful if you want to prevent a default guild note from showing.
+Character name is not case sensitive unless you specify a realm.]]
 }
 
 
@@ -88,7 +91,8 @@ end
 WHODIS_NS.SLASH["default"] = {
 func = whodis_remove_override,
 arg_str = "CharName",
-help = [[Removes any custom note and displays the default guild note (if there is one).
+help = [[Deletes any custom note.
+For guild members this will cause the default guild note to show.
 Character name is not case sensitive unless you specify a realm.]]
 }
 WHODIS_NS.SLASH["remove"] = { deprecated = "default" }
