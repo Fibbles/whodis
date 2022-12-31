@@ -32,14 +32,16 @@ SlashCmdList.WHODIS = function(raw_arg_str)
 		return
 	end
 	
-	if not command_struct.deprecated then
+	if command_struct.deprecated then
+		WHODIS_NS.warn_generic("This command is deprecated.")
+	end
+	
+	if not command_struct.alias then
 		-- arguments are passed as a single string which may be empty
 		-- if the command requires multiple arguments it is expected to split the string itself
 		command_struct.func(arguments)
 	else
-		command_struct_redir = WHODIS_NS.SLASH[command_struct.deprecated]
-		
-		WHODIS_NS.warn_generic("This command is deprecated. Please use the command [" .. command_struct.deprecated .. "] instead.")
+		command_struct_redir = WHODIS_NS.SLASH[command_struct.alias]
 		
 		command_struct_redir.func(arguments)
 	end

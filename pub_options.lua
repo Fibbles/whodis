@@ -26,7 +26,10 @@ help = [[Only show notes for guildies with this rank (off by default).
 You may only want to display notes against players with rank 'alt' for example.
 Leave the filter blank to disable it and show notes for all guildies.]]
 }
-WHODIS_NS.SLASH["rank"] = { deprecated = "rank-filter" }
+WHODIS_NS.SLASH["rank"] = {
+deprecated = true,
+alias = "rank-filter"
+}
 
 
 local function bool_str_parser(bool_str)

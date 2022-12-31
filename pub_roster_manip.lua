@@ -95,7 +95,9 @@ help = [[Deletes any custom note.
 For guild members this will cause the default guild note to show.
 Character name is not case sensitive unless you specify a realm.]]
 }
-WHODIS_NS.SLASH["remove"] = { deprecated = "default" }
+WHODIS_NS.SLASH["remove"] = { 
+alias = "default"
+}
 
 
 local function whodis_reset()

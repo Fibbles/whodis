@@ -15,13 +15,7 @@ local function whodis_print_help_single(command)
 	if not command_struct then
 		-- command doesn't exist
 		WHODIS_NS.warn_command()
-	else		
-		if command_struct.deprecated then
-			print("[ /whodis " .. command .. " ]")
-			print("This command is deprecated. Please use the command [" .. command_struct.deprecated .. "] instead.")
-			return
-		end
-		
+	else			
 		local example_str = "[ /whodis " .. command
 		
 		if command_struct.arg_str then
@@ -29,6 +23,15 @@ local function whodis_print_help_single(command)
 		end
 		
 		print(example_str .. " ]")
+		
+		if command_struct.deprecated then
+			print("This command is deprecated.")
+		end
+		
+		if command_struct.alias then
+			print("This command is an alias. Please see the command [" .. command_struct.alias .. "] for details.")
+			return
+		end
 		
 		if command_struct.help then
 			print(command_struct.help)

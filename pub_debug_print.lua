@@ -95,9 +95,11 @@ help = "Print a list of all addon options and their current values."
 }
 WHODIS_NS.SLASH["print-rank-filter"] = {
 dev = true,
-deprecated = "print-options"
+deprecated = true,
+alias = "print-options"
 }
 WHODIS_NS.SLASH["print-rank"] = { 
 dev = true,
-deprecated = "print-options"
+deprecated = true,
+alias = "print-options"
 }
