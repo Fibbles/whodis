@@ -7,9 +7,9 @@ local ADDON_NAME, WHODIS_NS = ...
 
 local function whodis_rank_ok(rank)
 
-	return (WHODIS_ADDON_DATA_CHAR.ALT_RANK == nil or 
+	return (WHODIS_ADDON_DATA_CHAR.SETTINGS.ALT_RANK == nil or 
 		    rank == "n/a" or
-		    WHODIS_ADDON_DATA_CHAR.ALT_RANK == rank:lower())
+		    WHODIS_ADDON_DATA_CHAR.SETTINGS.ALT_RANK == rank:lower())
 end
 
 local function whodis_safe_get_roster_info(name)
@@ -38,7 +38,7 @@ local function whodis_chat_manip(self, event, msg, author, ...)
 		-- if we're checking for rank
 		if whodis_rank_ok(rank) and note and note ~= '' then		
 			local msg_mod = nil
-			if WHODIS_ADDON_DATA.COLOUR_BRACKETS then
+			if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
 				msg_mod = "|cffd3d3d3(" .. note .. ")|r: " .. msg
 			else
 				msg_mod = "(" .. note .. "): " .. msg
@@ -66,7 +66,7 @@ local function whodis_login_manip(self, event, msg, ...)
 				local search_name = "|h%[" .. name .. "%]|h"
 			
 				local format_note = nil
-				if WHODIS_ADDON_DATA.COLOUR_BRACKETS then
+				if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
 					format_note = search_name .. " |cffd3d3d3%(" .. note .. "%)|r"
 				else
 					format_note = search_name .. " %(" .. note .. "%)"
@@ -131,7 +131,7 @@ GameTooltip:HookScript("OnTooltipSetUnit", function(self)
 		
 				if whodis_rank_ok(rank) and note and note ~= '' then
 					local formatted_note = nil
-					if WHODIS_ADDON_DATA.COLOUR_BRACKETS then
+					if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
 						formatted_note  = " |cffa9a9a9(" .. note .. ")|r"
 					else
 						formatted_note  = " (" .. note .. ")"

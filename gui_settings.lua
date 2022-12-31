@@ -13,22 +13,22 @@ local function whodis_create_bool_options(parent_frame, anchor_frame, y_offset)
 	
 		["Note Filter"] = {
 			command = WHODIS_NS.SLASH["note-filter"],
-			getter = function() return WHODIS_ADDON_DATA.NOTE_FILTER end
+			getter = function() return WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER end
 		},
 			
 		["Colour Names"] = {
 			command = WHODIS_NS.SLASH["colour-names"],
-			getter = function() return WHODIS_ADDON_DATA.COLOUR_NAMES end
+			getter = function() return WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES end
 		},
 			
 		["Colour Brackets"] = {
 			command = WHODIS_NS.SLASH["colour-brackets"],
-			getter = function() return WHODIS_ADDON_DATA.COLOUR_BRACKETS end
+			getter = function() return WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS end
 		},
 			
 		["Hide Greeting"] = {
 			command = WHODIS_NS.SLASH["hide-greeting"],
-			getter = function() return WHODIS_ADDON_DATA.HIDE_GREETING end
+			getter = function() return WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING end
 		}
 	}
 	
@@ -98,7 +98,7 @@ local function whodis_create_text_options(parent_frame, anchor_frame, y_offset)
 			
 	local function rank_filter_getter()
 		eb:ClearFocus()
-		eb:SetText(WHODIS_ADDON_DATA_CHAR.ALT_RANK or "")
+		eb:SetText(WHODIS_ADDON_DATA_CHAR.SETTINGS.ALT_RANK or "")
 		eb:SetCursorPosition(0)
 	end
 	

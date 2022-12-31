@@ -22,7 +22,7 @@ local function whodis_poll_guild_roster(silent)
 	for iii = 1, num_members do
 		local name, rank, _, _, class, _, note = GetGuildRosterInfo(iii)
 				
-		if WHODIS_ADDON_DATA.NOTE_FILTER then
+		if WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER then
 			-- e.g. convert "Kallisto's alt" to "Kallisto"
 			note = gsub(note, "'s ALT$", "")
 			note = gsub(note, "'s Alt$", "")
@@ -83,7 +83,7 @@ end
 
 local function whodis_colour_main_names()
 
-	if WHODIS_ADDON_DATA.COLOUR_NAMES then 
+	if WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES then 
 		-- attempt to find the class of the guild member's main so we can colour the note
 		for name, roster_info in pairs(WHODIS_ADDON_DATA_CHAR.ROSTER) do
 			local _, class, note = unpack(roster_info)

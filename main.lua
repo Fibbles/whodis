@@ -7,12 +7,18 @@ local ADDON_NAME, WHODIS_NS = ...
 
 WHODIS_NS.INITIALISED = false
 
-local function whodis_initialiser()
+local function whodis_setup_db()
 
 	-- Our saved variables are ready at this point. If there are none, variables will be nil.
 	
+	
+	-- ACCOUNT WIDE DATABASES
 	if not WHODIS_ADDON_DATA then
 		WHODIS_ADDON_DATA = { }
+	end
+	
+	if not WHODIS_ADDON_DATA.SETTINGS then
+		WHODIS_ADDON_DATA.SETTINGS = { }
 	end
 	
 	-- Overides are global across all characters and realms
@@ -20,24 +26,15 @@ local function whodis_initialiser()
 		WHODIS_ADDON_DATA.OVERRIDES = { }
 	end
 	
-	if WHODIS_ADDON_DATA.COLOUR_NAMES == nil then
-		WHODIS_ADDON_DATA.COLOUR_NAMES = true
-	end
 	
-	if WHODIS_ADDON_DATA.COLOUR_BRACKETS == nil then
-		WHODIS_ADDON_DATA.COLOUR_BRACKETS = true
-	end
 	
-	if WHODIS_ADDON_DATA.HIDE_GREETING == nil then
-		WHODIS_ADDON_DATA.HIDE_GREETING = false
-	end
-	
-	if WHODIS_ADDON_DATA.NOTE_FILTER == nil then
-		WHODIS_ADDON_DATA.NOTE_FILTER = true
-	end
-	
+	-- CHARACTER SPECIFIC DATABASES
 	if not WHODIS_ADDON_DATA_CHAR then
 		WHODIS_ADDON_DATA_CHAR = { }
+	end
+
+	if not WHODIS_ADDON_DATA_CHAR.SETTINGS then
+		WHODIS_ADDON_DATA_CHAR.SETTINGS = { }
 	end
 	
 	-- Rosters are guild specific so are dealt with per character
@@ -45,11 +42,44 @@ local function whodis_initialiser()
 		WHODIS_ADDON_DATA_CHAR.ROSTER = { }
 	end
 	
-	--[[
-	if not WHODIS_ADDON_DATA_CHAR.ALT_RANK then
-		WHODIS_ADDON_DATA_CHAR.ALT_RANK = "alt"
+	
+
+	local previous_db_ver = WHODIS_ADDON_DATA.DB_VERSION or 1.0
+	WHODIS_ADDON_DATA.DB_VERSION = 2.0
+	
+	if previous_db_ver < 2.0 then
+		-- clean up old settings from 1.x versions of the addon
+		WHODIS_ADDON_DATA.COLOUR_NAMES = nil
+		WHODIS_ADDON_DATA.COLOUR_BRACKETS = nil
+		WHODIS_ADDON_DATA.HIDE_GREETING = nil
+		WHODIS_ADDON_DATA.NOTE_FILTER = nil
+		
+		WHODIS_ADDON_DATA_CHAR.ALT_RANK = nil
 	end
-	]]--
+	
+	
+	-- Default settings
+	if WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES == nil then
+		WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES = true
+	end
+	
+	if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS == nil then
+		WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS = true
+	end
+	
+	if WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING == nil then
+		WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING = false
+	end
+	
+	if WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER == nil then
+		WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER = true
+	end
+end
+
+
+local function whodis_initialiser()
+
+	whodis_setup_db()
 	
 	-- ensure the local cache is populated, triggers a GUILD_ROSTER_UPDATE
 	-- wont do anything if another addon called this in the last 10s
@@ -61,7 +91,7 @@ local function whodis_initialiser()
 	
 	WHODIS_NS.create_gui_frames()
 
-	if not WHODIS_ADDON_DATA.HIDE_GREETING then
+	if not WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING then
 		local addon_version = GetAddOnMetadata(ADDON_NAME, "Version")
 		WHODIS_NS.msg_init(addon_version)
 	end
@@ -86,7 +116,7 @@ local function whodis_events(self, event, ...)
 		end 
 	elseif WHODIS_NS.INITIALISED and event == "GUILD_ROSTER_UPDATE" then
 		if not WHODIS_NS.GUILD_ROSTER_LOADED then
-			WHODIS_NS.build_roster(WHODIS_ADDON_DATA.HIDE_GREETING)
+			WHODIS_NS.build_roster(WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING)
 		end
 		-- GUILD_ROSTER_UPDATE can be triggered 2-3 times every time someone logs in or out
 		-- once after log in should be fine, the user can always call /whodis populate to force an update if required
@@ -109,7 +139,7 @@ function whodis_event_frame:on_update(since_last_update)
 		if (self.since_last_update >= 30) then -- in seconds
 			if not WHODIS_NS.GUILD_ROSTER_LOADED then
 				GuildRoster()
-				WHODIS_NS.build_roster(WHODIS_ADDON_DATA.HIDE_GREETING)
+				WHODIS_NS.build_roster(WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING)
 			end
 			whodis_event_frame:SetScript("OnUpdate", nil)
 		end

@@ -11,10 +11,10 @@ end
 local function whodis_set_rank_filter(rank) -- pass nil to disable
 
 	if rank and rank ~= "" then
-		WHODIS_ADDON_DATA_CHAR.ALT_RANK = rank:lower()
+		WHODIS_ADDON_DATA_CHAR.SETTINGS.ALT_RANK = rank:lower()
 		WHODIS_NS.msg_generic("Only showing guild notes for guild members with the rank '" .. rank .. "'.")
 	else
-		WHODIS_ADDON_DATA_CHAR.ALT_RANK = nil
+		WHODIS_ADDON_DATA_CHAR.SETTINGS.ALT_RANK = nil
 		WHODIS_NS.msg_generic("Showing guild notes for all guild members regardless of rank.")
 	end
 end
@@ -54,7 +54,7 @@ local function whodis_note_filter(bool_str)
 	local bool = bool_str_parser(bool_str)
 
 	if bool ~= nil then
-		WHODIS_ADDON_DATA.NOTE_FILTER = bool
+		WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER = bool
 		WHODIS_NS.msg_generic("Filtering of 'alt' and 'main' from the end of guild notes set to '" .. tostring(bool) .. "'.")
 		WHODIS_NS.build_roster(true)
 	end
@@ -72,7 +72,7 @@ local function whodis_colour_names(bool_str)
 	local bool = bool_str_parser(bool_str)
 
 	if bool ~= nil then
-		WHODIS_ADDON_DATA.COLOUR_NAMES = bool
+		WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES = bool
 		WHODIS_NS.msg_generic("Name colouring set to '" .. tostring(bool) .. "'.")
 		WHODIS_NS.build_roster(true)
 	end
@@ -90,7 +90,7 @@ local function whodis_colour_brackets(bool_str)
 	local bool = bool_str_parser(bool_str)
 
 	if bool ~= nil then
-		WHODIS_ADDON_DATA.COLOUR_BRACKETS = bool
+		WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS = bool
 		WHODIS_NS.msg_generic("Bracket colouring set to '" .. tostring(bool) .. "'.")
 	end
 end
@@ -108,7 +108,7 @@ local function whodis_hide_greeting(bool_str)
 	local bool = bool_str_parser(bool_str)
 
 	if bool ~= nil then
-		WHODIS_ADDON_DATA.HIDE_GREETING = bool
+		WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING = bool
 		WHODIS_NS.msg_generic("Hide addon messages during load is now set to '" .. tostring(bool) .. "'.")
 	end
 end

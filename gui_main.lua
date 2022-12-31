@@ -247,7 +247,7 @@ function WHODIS_NS.update_gui_note_grid(grid_frame, page_num)
 	-- page size is set when the grid is created and shouldn't be altered after
 	local page_size = grid_frame.page_size
 	
-	local num_pages = math.ceil(num_names / page_size)
+	local num_pages = math.max(1, math.ceil(num_names / page_size))
 	grid_frame.num_pages = num_pages
 	
 	page_num = math.max(1, math.min(page_num, num_pages))
@@ -263,7 +263,7 @@ function WHODIS_NS.update_gui_note_grid(grid_frame, page_num)
 		
 		local row = grid_frame.rows[row_num]
 			
-		if iii <= end_index then
+		if num_names > 0 and iii <= end_index then
 			
 			row:Show()
 			
@@ -331,8 +331,13 @@ local function whodis_create_gui_main_frame(parent_frame, x_offset, y_offset, y_
 		
 	gui_main_frame.note_grid = whodis_create_note_grid(gui_main_frame, title_header, y_section_padding, note_grid_page_size)
 	
-	--populate the grid
+	-- populate the grid
 	WHODIS_NS.update_gui_note_grid(gui_main_frame.note_grid, 1)
+	
+	-- cause the main gui frame to refresh the note grid each time it is re-opened
+	gui_main_frame:HookScript("OnShow", function(self)
+		WHODIS_NS.update_gui_note_grid(self.note_grid, 1)
+	end)
 	
 	InterfaceOptions_AddCategory(gui_main_frame)
 	

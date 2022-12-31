@@ -73,7 +73,7 @@ local function whodis_print_options()
 	
 	WHODIS_NS.msg_generic("Account wide options are currently set as:")
 	
-	for key, value in pairs(WHODIS_ADDON_DATA) do
+	for key, value in pairs(WHODIS_ADDON_DATA.SETTINGS) do
 		if type(value) ~= "table" then
 			print(key .. " : " .. tostring(value))
 		end
@@ -81,7 +81,7 @@ local function whodis_print_options()
 	
 	WHODIS_NS.msg_generic("Per character options are currently set as:")
 	
-	for key, value in pairs(WHODIS_ADDON_DATA_CHAR) do
+	for key, value in pairs(WHODIS_ADDON_DATA_CHAR.SETTINGS) do
 		if type(value) ~= "table" then
 			print(key .. " : " .. tostring(value))
 		end
