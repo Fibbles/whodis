@@ -7,10 +7,9 @@ local ADDON_NAME, WHODIS_NS = ...
 
 WHODIS_NS.INITIALISED = false
 
-local function whodis_setup_db()
+local function whodis_setup_account_db(addon_version)
 
 	-- Our saved variables are ready at this point. If there are none, variables will be nil.
-	
 	
 	-- ACCOUNT WIDE DATABASES
 	if not WHODIS_ADDON_DATA then
@@ -21,31 +20,15 @@ local function whodis_setup_db()
 		WHODIS_ADDON_DATA.SETTINGS = { }
 	end
 	
+	
 	-- Overides are global across all characters and realms
 	if not WHODIS_ADDON_DATA.OVERRIDES then
 		WHODIS_ADDON_DATA.OVERRIDES = { }
 	end
 	
 	
-	
-	-- CHARACTER SPECIFIC DATABASES
-	if not WHODIS_ADDON_DATA_CHAR then
-		WHODIS_ADDON_DATA_CHAR = { }
-	end
-
-	if not WHODIS_ADDON_DATA_CHAR.SETTINGS then
-		WHODIS_ADDON_DATA_CHAR.SETTINGS = { }
-	end
-	
-	-- Rosters are guild specific so are dealt with per character
-	if not WHODIS_ADDON_DATA_CHAR.ROSTER then
-		WHODIS_ADDON_DATA_CHAR.ROSTER = { }
-	end
-	
-	
-
-	local previous_db_ver = WHODIS_ADDON_DATA.DB_VERSION or 1.0
-	WHODIS_ADDON_DATA.DB_VERSION = 2.0
+	local previous_db_ver = tonumber(WHODIS_ADDON_DATA.DB_VERSION or 1.0)
+	WHODIS_ADDON_DATA.DB_VERSION = tonumber(addon_version)
 	
 	if previous_db_ver < 2.0 then
 		-- clean up old settings from 1.x versions of the addon
@@ -53,8 +36,6 @@ local function whodis_setup_db()
 		WHODIS_ADDON_DATA.COLOUR_BRACKETS = nil
 		WHODIS_ADDON_DATA.HIDE_GREETING = nil
 		WHODIS_ADDON_DATA.NOTE_FILTER = nil
-		
-		WHODIS_ADDON_DATA_CHAR.ALT_RANK = nil
 	end
 	
 	
@@ -77,9 +58,39 @@ local function whodis_setup_db()
 end
 
 
+local function whodis_setup_char_db(addon_version)
+
+	-- CHARACTER SPECIFIC DATABASES
+	if not WHODIS_ADDON_DATA_CHAR then
+		WHODIS_ADDON_DATA_CHAR = { }
+	end
+
+	if not WHODIS_ADDON_DATA_CHAR.SETTINGS then
+		WHODIS_ADDON_DATA_CHAR.SETTINGS = { }
+	end
+	
+	-- Rosters are guild specific so are dealt with per character
+	if not WHODIS_ADDON_DATA_CHAR.ROSTER then
+		WHODIS_ADDON_DATA_CHAR.ROSTER = { }
+	end
+	
+	
+	local previous_db_ver = tonumber(WHODIS_ADDON_DATA_CHAR.DB_VERSION or 1.0)
+	WHODIS_ADDON_DATA_CHAR.DB_VERSION = tonumber(addon_version)
+	
+	if previous_db_ver < 2.0 then
+		-- clean up old settings from 1.x versions of the addon		
+		WHODIS_ADDON_DATA_CHAR.ALT_RANK = nil
+	end
+end
+
+
 local function whodis_initialiser()
 
-	whodis_setup_db()
+	local addon_version = GetAddOnMetadata(ADDON_NAME, "Version")
+
+	whodis_setup_account_db(addon_version)
+	whodis_setup_char_db(addon_version)
 	
 	-- ensure the local cache is populated, triggers a GUILD_ROSTER_UPDATE
 	-- wont do anything if another addon called this in the last 10s
@@ -92,7 +103,6 @@ local function whodis_initialiser()
 	WHODIS_NS.create_gui_frames()
 
 	if not WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING then
-		local addon_version = GetAddOnMetadata(ADDON_NAME, "Version")
 		WHODIS_NS.msg_init(addon_version)
 	end
 	
