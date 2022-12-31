@@ -127,6 +127,6 @@ end
 
 WHODIS_NS.SLASH["populate"] = {
 func = whodis_populate,
-help = [[Update cached guild notes by attempting to force an update of the guild roster.
-Useful if your guildmaster just set some new guild notes.]]
+help = [[Update cached guild notes by forcing an update of the guild roster.
+Useful if your guildmaster set some new guild notes after you logged in.]]
 }

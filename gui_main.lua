@@ -2,6 +2,19 @@
 local ADDON_NAME, WHODIS_NS = ...
 
 
+-- GUI helpers
+
+function WHODIS_NS.tooltip_helper_enter(self)
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+	GameTooltip:SetText(self.HelpText, 1, 1, 1, 1, true)
+	GameTooltip:Show()
+end
+
+function WHODIS_NS.tooltip_helper_leave()
+	GameTooltip:Hide()
+end
+
+
 -- GUI Addon Main Page
 
 local function whodis_create_note_setter(parent_frame, anchor_frame, y_offset)
@@ -61,9 +74,13 @@ local function whodis_create_note_setter(parent_frame, anchor_frame, y_offset)
 	btn:SetPoint("LEFT", note_eb, "RIGHT", x_padding, 0)
 	btn:SetText("Set")
 	btn:SetWidth(40)
-	btn.tooltipText = WHODIS_NS.SLASH["set"].help
 	
 	btn:SetScript("OnClick", note_setter)
+	
+	-- dont use the default tooltipText field as it doesn't format correctly
+	btn.HelpText = WHODIS_NS.SLASH["set"].help
+	btn:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
+	btn:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
 
 	return name_eb
 end
@@ -125,13 +142,22 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	row_frame.set_button:SetText("Set")
 	row_frame.set_button:SetWidth(40)
 	row_frame.set_button:SetScript("OnClick", note_setter)
-	row_frame.set_button.tooltipText = WHODIS_NS.SLASH["set"].help
+	
+	-- dont use the default tooltipText field as it doesn't format correctly
+	row_frame.set_button.HelpText = WHODIS_NS.SLASH["set"].help
+	row_frame.set_button:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
+	row_frame.set_button:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
+	
 	
 	row_frame.default_button = CreateFrame("Button", nil, row_frame, "UIPanelButtonTemplate")
 	row_frame.default_button:SetPoint("LEFT", row_frame.set_button, "RIGHT", 0, 0)
 	row_frame.default_button:SetText("Default")
 	row_frame.default_button:SetWidth(60)
-	row_frame.default_button.tooltipText = WHODIS_NS.SLASH["default"].help
+	
+	-- dont use the default tooltipText field as it doesn't format correctly
+	row_frame.default_button.HelpText = WHODIS_NS.SLASH["default"].help
+	row_frame.default_button:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
+	row_frame.default_button:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
 	
 	local function note_default(self)
 		row_frame.note_eb:ClearFocus()
@@ -143,12 +169,17 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	end
 	
 	row_frame.default_button:SetScript("OnClick", note_default)
+	
 
 	row_frame.hide_button = CreateFrame("Button", nil, row_frame, "UIPanelButtonTemplate")
 	row_frame.hide_button:SetPoint("LEFT", row_frame.default_button, "RIGHT", 0, 0)
 	row_frame.hide_button:SetText("Hide")
 	row_frame.hide_button:SetWidth(40)
-	row_frame.hide_button.tooltipText = WHODIS_NS.SLASH["hide"].help
+	
+	-- dont use the default tooltipText field as it doesn't format correctly
+	row_frame.hide_button.HelpText = WHODIS_NS.SLASH["hide"].help
+	row_frame.hide_button:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
+	row_frame.hide_button:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
 	
 	local function note_hide(self)
 		row_frame.note_eb:ClearFocus()
@@ -302,6 +333,27 @@ function WHODIS_NS.update_gui_note_grid(grid_frame, page_num)
 	grid_frame.page_num_label:SetText(tostring(page_num) .. "/" .. tostring(num_pages))
 end
 
+local function whodis_create_refresh_button(parent_frame, anchor_frame, x_offset, y_offset)
+
+	local refresh_button = CreateFrame("Button", nil, parent_frame, "UIPanelButtonTemplate")
+	refresh_button:SetPoint("TOPRIGHT", anchor_frame, "TOPRIGHT", -x_offset, y_offset)
+	refresh_button:SetText("Refresh")
+	refresh_button:SetWidth(80)
+	
+	-- dont use the default tooltipText field as it doesn't format correctly
+	refresh_button.HelpText = WHODIS_NS.SLASH["populate"].help
+	refresh_button:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
+	refresh_button:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
+	
+	local function refresh_page(self)
+		WHODIS_NS.SLASH["populate"].func()
+		WHODIS_NS.update_gui_note_grid(self:GetParent(), self:GetParent().current_page)
+	end
+	refresh_button:SetScript("OnClick", refresh_page)
+
+	return refresh_button
+end
+
 function WHODIS_NS.create_gui_title_header(parent_frame, x_offset, y_offset)
 
 	local header_frame = CreateFrame("Frame", nil, parent_frame)
@@ -326,13 +378,15 @@ local function whodis_create_gui_main_frame(parent_frame, x_offset, y_offset, y_
 	gui_main_frame.name = "Who Dis"
 	
 	local title_header = WHODIS_NS.create_gui_title_header(gui_main_frame, x_offset, y_section_padding)
-		
+			
 	local note_grid_page_size = 14
 		
 	gui_main_frame.note_grid = whodis_create_note_grid(gui_main_frame, title_header, y_section_padding, note_grid_page_size)
 	
 	-- populate the grid
 	WHODIS_NS.update_gui_note_grid(gui_main_frame.note_grid, 1)
+	
+	local refresh_button = whodis_create_refresh_button(gui_main_frame.note_grid, gui_main_frame, x_offset, y_section_padding)
 	
 	-- cause the main gui frame to refresh the note grid each time it is re-opened
 	gui_main_frame:HookScript("OnShow", function(self)
