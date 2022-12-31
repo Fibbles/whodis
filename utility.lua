@@ -97,3 +97,14 @@ local function split_all_words_from_str(str)
 end
 
 WHODIS_NS.split_all_words_from_str = split_all_words_from_str
+
+
+local function strip_colour_codes_from_str(str)
+
+	str = str:gsub("|c%x%x%x%x%x%x%x%x", "" )
+	str = str:gsub("|r", "" )
+	
+	return str
+end
+
+WHODIS_NS.strip_colour_codes_from_str = strip_colour_codes_from_str

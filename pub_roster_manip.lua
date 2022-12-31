@@ -17,6 +17,10 @@ local function whodis_set_override(name, note)
 	
 	if not note then
 		note = ""
+	else
+		-- colours codes must be stripped from the note as they will interfere with name lookups
+		-- unlikely to be done via the command line but the GUI may accidentally pass back a previously coloured note
+		note = WHODIS_NS.strip_colour_codes_from_str(note)
 	end
 	
 	local full_name = name
