@@ -41,7 +41,8 @@ local function whodis_create_bool_options(parent_frame, anchor_frame, y_offset)
 	
 		local cb = CreateFrame("CheckButton", nil, parent_frame, "InterfaceOptionsCheckButtonTemplate")
 		cb:SetPoint("TOPLEFT", left_anchor, anchor_point, x_offset, y_offset)
-		--cb.Text:SetText(name)
+---@diagnostic disable-next-line: undefined-field
+		cb.Text:SetText(name)
 		cb.tooltipText = name
 		cb.tooltipRequirement = struct.command.help		
 		cb:SetChecked(struct.getter()) -- set the initial checked state
