@@ -41,7 +41,7 @@ local function whodis_create_bool_options(parent_frame, anchor_frame, y_offset)
 	
 		local cb = CreateFrame("CheckButton", nil, parent_frame, "InterfaceOptionsCheckButtonTemplate")
 		cb:SetPoint("TOPLEFT", left_anchor, anchor_point, x_offset, y_offset)
-		cb.Text:SetText(name)
+		--cb.Text:SetText(name)
 		cb.tooltipText = name
 		cb.tooltipRequirement = struct.command.help		
 		cb:SetChecked(struct.getter()) -- set the initial checked state
@@ -92,7 +92,7 @@ local function whodis_create_text_options(parent_frame, anchor_frame, y_offset)
 	local eb = CreateFrame("EditBox", nil, parent_frame, "InputBoxTemplate")
 	eb:SetSize(200, 22)
 	eb:SetAutoFocus(false)
-	eb:IsMultiLine(false)
+	eb:SetMultiLine(false)
 	--eb:SetMaxLetters(30)
 	eb:SetPoint("LEFT", label, "RIGHT", x_padding, 0)
 			
@@ -115,6 +115,7 @@ local function whodis_create_text_options(parent_frame, anchor_frame, y_offset)
 	eb:SetScript("OnEnterPressed", rank_filter_setter)
 		
 	local btn = CreateFrame("Button", nil, parent_frame, "UIPanelButtonTemplate")
+---@diagnostic disable-next-line: param-type-mismatch
 	btn:SetPoint("LEFT", eb, "RIGHT", x_padding, 0)
 	btn:SetText("Set")
 	btn:SetWidth(80)
@@ -147,6 +148,7 @@ function WHODIS_NS.create_gui_settings_frame(parent_frame, x_offset, y_offset, y
 	
 	local char_opts_label = gui_settings_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
 	char_opts_label:SetJustifyH("LEFT")
+---@diagnostic disable-next-line: param-type-mismatch
 	char_opts_label:SetPoint("TOPLEFT", bool_opt_anchor, "BOTTOMLEFT", 0, y_section_padding)
 	char_opts_label:SetText("Per Character Settings")
 	

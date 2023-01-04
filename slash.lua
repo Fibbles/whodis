@@ -18,7 +18,7 @@ SlashCmdList.WHODIS = function(raw_arg_str)
 		return
 	end
 	
-	command, arguments = WHODIS_NS.split_first_word_from_str(raw_arg_str)
+	local command, arguments = WHODIS_NS.split_first_word_from_str(raw_arg_str)
 	
 	if arguments == "" then
 		arguments = nil
@@ -41,7 +41,7 @@ SlashCmdList.WHODIS = function(raw_arg_str)
 		-- if the command requires multiple arguments it is expected to split the string itself
 		command_struct.func(arguments)
 	else
-		command_struct_redir = WHODIS_NS.SLASH[command_struct.alias]
+		local command_struct_redir = WHODIS_NS.SLASH[command_struct.alias]
 		
 		command_struct_redir.func(arguments)
 	end

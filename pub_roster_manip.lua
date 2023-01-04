@@ -46,7 +46,7 @@ local function whodis_set_override_parser(arg_str)
 		return
 	end
 	
-	name, note = WHODIS_NS.split_first_word_from_str(arg_str)
+	local name, note = WHODIS_NS.split_first_word_from_str(arg_str)
 	
 	whodis_set_override(name, note)
 end
@@ -87,6 +87,10 @@ local function whodis_remove_override(name)
 	end
 	
 	WHODIS_ADDON_DATA.OVERRIDES[full_name] = nil
+
+	-- shouldn't really be required, however the build_roster func doesn't fully clear out the saved roster if the player is unguilded
+	-- code smell. this is a temporary work around
+	WHODIS_ADDON_DATA_CHAR.ROSTER[full_name] = nil
 	
 	WHODIS_NS.msg_generic("Note reset to default for " .. full_name .. ".")
 	WHODIS_NS.build_roster(true)
@@ -120,7 +124,7 @@ Be sure you want to call this because once your notes are gone, they can't be re
 
 local function whodis_populate()
 
-	GuildRoster()
+	C_GuildInfo.GuildRoster()
 	WHODIS_NS.warn_generic("Forced an update of the guild roster. This is rate limited to once every 10 seconds by Blizzard so may not have been successful.")
 	WHODIS_NS.build_roster()
 end

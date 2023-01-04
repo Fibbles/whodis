@@ -101,7 +101,7 @@ local function whodis_initialiser()
 	-- wont do anything if another addon called this in the last 10s
 	-- this may be an issue on the addon's first run 
 	-- we will eventually have the cached roster in WHODIS_ADDON_DATA_CHAR as a fallback
-	GuildRoster()
+	C_GuildInfo.GuildRoster()
 	
 	WHODIS_NS.register_chat_filters()
 	
@@ -153,7 +153,7 @@ function whodis_event_frame:on_update(since_last_update)
 		
 		if (self.since_last_update >= 30) then -- in seconds
 			if not WHODIS_NS.GUILD_ROSTER_LOADED then
-				GuildRoster()
+				C_GuildInfo.GuildRoster()
 				WHODIS_NS.build_roster(WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING)
 			end
 			whodis_event_frame:SetScript("OnUpdate", nil)
