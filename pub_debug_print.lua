@@ -10,17 +10,23 @@ end
 
 local function whodis_print_character_db()
 
-	WHODIS_NS.msg_generic("Roster - Guild notes and custom notes")
+	WHODIS_NS.msg_generic("Database of guild notes and custom notes")
+
 	for name, char_info in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
-		print("name: " .. name .. " || hidden: " .. char_info.hidden .. " || rank: ".. char_info.rank .. 
-			  " || class: " .. char_info.class .. " || guild note: " .. char_info.guild_note .. " || custom note: " .. char_info.override_note)
+		local output_string = "name: " .. name
+
+		for key, value in pairs(char_info) do
+			output_string = output_string .. " || " .. key .. ": " .. value
+		end
+
+		print(output_string)
 	end
 end
 
 WHODIS_NS.SLASH["print-character-db"] = {
 func = whodis_print_character_db,
 dev = true,
-help = "Print a list of characters win the database (guild rosters + custom notes)."
+help = "Print a list of characters in the database (guild rosters + custom notes)."
 }
 
 
@@ -39,11 +45,15 @@ local function whodis_print_player(name)
 	local char_info = WHODIS_ADDON_DATA.CHARACTER_DB[full_name]
 	
 	if char_info then
-		WHODIS_NS.msg_generic("name: " .. name .. " || hidden: " .. char_info.hidden .. " || rank: ".. char_info.rank .. 
-							  " || class: " .. char_info.class .. " || guild note: " .. char_info.guild_note .. 
-							  " || custom note: " .. char_info.override_note)
+		local output_string = "name: " .. name
+
+		for key, value in pairs(char_info) do
+			output_string = output_string .. " || " .. key .. ": " .. value
+		end
+
+		WHODIS_NS.msg_generic(output_string)
 	else
-		WHODIS_NS.warn_generic("No player of that name saved in the roster.")
+		WHODIS_NS.warn_generic("No player of that name saved in the database.")
 	end
 end
 

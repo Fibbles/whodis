@@ -4,14 +4,19 @@ local ADDON_NAME, WHODIS_NS = ...
 
 -- GUI helpers
 
-function WHODIS_NS.tooltip_helper_enter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:SetText(self.HelpText, 1, 1, 1, 1, true)
-	GameTooltip:Show()
-end
+function WHODIS_NS.tooltip_helper(button, text)
 
-function WHODIS_NS.tooltip_helper_leave()
-	GameTooltip:Hide()
+	button.HelpText = text
+
+	button:HookScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:SetText(self.HelpText, 1, 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+
+	button:HookScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 end
 
 
@@ -80,9 +85,7 @@ local function whodis_create_note_setter(parent_frame, anchor_frame, y_offset)
 	btn:SetScript("OnClick", note_setter)
 	
 	-- dont use the default tooltipText field as it doesn't format correctly
-	btn.HelpText = WHODIS_NS.SLASH["set"].help
-	btn:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
-	btn:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
+	WHODIS_NS.tooltip_helper(btn, WHODIS_NS.SLASH["set"].help)
 
 	return name_eb
 end
@@ -148,9 +151,7 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	row_frame.set_button:SetScript("OnClick", note_setter)
 	
 	-- dont use the default tooltipText field as it doesn't format correctly
-	row_frame.set_button.HelpText = WHODIS_NS.SLASH["set"].help
-	row_frame.set_button:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
-	row_frame.set_button:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
+	WHODIS_NS.tooltip_helper(row_frame.set_button, WHODIS_NS.SLASH["set"].help)
 	
 	
 	row_frame.default_button = CreateFrame("Button", nil, row_frame, "UIPanelButtonTemplate")
@@ -160,9 +161,7 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	row_frame.default_button:SetWidth(60)
 	
 	-- dont use the default tooltipText field as it doesn't format correctly
-	row_frame.default_button.HelpText = WHODIS_NS.SLASH["default"].help
-	row_frame.default_button:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
-	row_frame.default_button:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
+	WHODIS_NS.tooltip_helper(row_frame.default_button, WHODIS_NS.SLASH["default"].help)
 	
 	local function note_default(self)
 		row_frame.note_eb:ClearFocus()
@@ -183,9 +182,7 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	row_frame.hide_button:SetWidth(40)
 	
 	-- dont use the default tooltipText field as it doesn't format correctly
-	row_frame.hide_button.HelpText = WHODIS_NS.SLASH["hide"].help
-	row_frame.hide_button:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
-	row_frame.hide_button:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
+	WHODIS_NS.tooltip_helper(row_frame.hide_button, WHODIS_NS.SLASH["hide"].help)
 	
 	local function note_hide(self)
 		row_frame.note_eb:ClearFocus()
@@ -269,6 +266,41 @@ local function whodis_create_note_grid(parent_frame, anchor_frame, y_offset, num
 	return grid_frame
 end
 
+local function whodis_update_note_row(row, name)
+
+	row.name_label:SetText(name)
+
+	local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[name]
+	
+	local note = WHODIS_NS.FORMATTED_NOTE_DB[name] or character_info.override_note or character_info.guild_note or ""
+	
+	row.note_eb:SetText(note)
+	row.note_eb.read_only_text = note
+	row.note_eb:SetCursorPosition(0)
+
+	row.set_button:Enable()
+	row.default_button:Enable()
+	row.default_button:SetText("Default")
+	row.hide_button:Enable()
+
+	if character_info.hidden then
+		row.note_eb:SetText("")
+		row.note_eb.read_only_text = ""
+		row.hide_button:Disable()
+	elseif character_info.guild_note and not character_info.override_note then
+		-- guild member with only guild note
+		row.default_button:Disable()
+	elseif not character_info.guild_note and character_info.override_note then
+		-- none guild member with custom note
+		row.hide_button:Disable()
+		row.default_button:SetText("Delete")
+	elseif not character_info.guild_note and not character_info.override_note then
+		-- guild member but with no guild note or custom note
+		row.hide_button:Disable()
+		row.default_button:Disable()
+	end
+end
+
 function WHODIS_NS.update_gui_note_grid(grid_frame, page_num)
 	
 	-- sort the roster alpabetically
@@ -302,40 +334,8 @@ function WHODIS_NS.update_gui_note_grid(grid_frame, page_num)
 		local row = grid_frame.rows[row_num]
 			
 		if num_names > 0 and iii <= end_index then
-			
 			row:Show()
-			
-			row.name_label:SetText(names[iii])
-
-			local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[names[iii]]
-			
-			local note = WHODIS_NS.FORMATTED_NOTE_DB[names[iii]] or character_info.override_note or character_info.guild_note or ""
-			
-			row.note_eb:SetText(note)
-			row.note_eb.read_only_text = note
-			row.note_eb:SetCursorPosition(0)
-
-			if character_info.hidden then
-				row.note_eb:Hide()
-				row.set_button:Disable()
-				row.default_button:Enable()
-				row.hide_button:Disable()
-			else
-				row.note_eb:Show()
-				row.set_button:Enable()
-
-				if character_info.guild_note then
-					row.hide_button:Enable()
-				else
-					row.hide_button:Disable()
-				end
-
-				if character_info.override_note then
-					row.default_button:Enable()
-				else
-					row.default_button:Disable()
-				end
-			end
+			whodis_update_note_row(row, names[iii])
 		else
 			row:Hide()
 		end
@@ -363,9 +363,7 @@ local function whodis_create_refresh_button(parent_frame, anchor_frame, x_offset
 	refresh_button:SetWidth(80)
 	
 	-- dont use the default tooltipText field as it doesn't format correctly
-	refresh_button.HelpText = WHODIS_NS.SLASH["populate"].help
-	refresh_button:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
-	refresh_button:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
+	WHODIS_NS.tooltip_helper(refresh_button, WHODIS_NS.SLASH["populate"].help)
 	
 	local function refresh_page(self)
 		WHODIS_NS.SLASH["populate"].func()

@@ -20,14 +20,21 @@ local function whodis_default_or_remove(name)
 		full_name = WHODIS_NS.format_name_full(name)
 	end
 	
-	if not WHODIS_ADDON_DATA.CHARACTER_DB[full_name].guild_note then
+	local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[full_name]
+
+	if not character_info then
+		WHODIS_NS.warn_generic("No note stored for character " .. full_name .. ".")
+		return
+	end
+
+	if not character_info.guild_note then
 		-- nothing to default to, just remove instead
 		WHODIS_ADDON_DATA.CHARACTER_DB[full_name] = nil
 
 		WHODIS_NS.msg_generic("Note removed for " .. full_name .. ".")
 	else
-		WHODIS_ADDON_DATA.CHARACTER_DB[full_name].hidden = nil
-		WHODIS_ADDON_DATA.CHARACTER_DB[full_name].override_note = nil
+		character_info.hidden = nil
+		character_info.override_note = nil
 
 		WHODIS_NS.msg_generic("Note reset to default for " .. full_name .. ".")
 	end
@@ -65,7 +72,9 @@ local function whodis_set_override(name, note)
 		-- unlikely to be done via the command line but the GUI may accidentally pass back a previously coloured note
 		note = WHODIS_NS.strip_colour_codes_from_str(note)
 	
-		WHODIS_ADDON_DATA.CHARACTER_DB[full_name] = {override_note = note}
+		local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[full_name] or {}
+		character_info.override_note = note
+		WHODIS_ADDON_DATA.CHARACTER_DB[full_name] = character_info
 
 		WHODIS_NS.msg_generic("Custom note set for " .. full_name .. ".")
 
@@ -109,11 +118,18 @@ local function whodis_hide_note(name)
 		full_name = WHODIS_NS.format_name_full(name)
 	end
 
+	local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[full_name]
+
+	if not character_info then
+		WHODIS_NS.warn_generic("No note stored for character " .. full_name .. ".")
+		return
+	end
+
 	-- not a custom note
-	if WHODIS_ADDON_DATA.CHARACTER_DB[full_name].guild_note then
+	if character_info.guild_note then
 	
-		WHODIS_ADDON_DATA.CHARACTER_DB[full_name].hidden = true
-		WHODIS_ADDON_DATA.CHARACTER_DB[full_name].override_note = nil
+		character_info.hidden = true
+		character_info.override_note = nil
 
 		WHODIS_NS.msg_generic("Note hidden for " .. full_name .. ".")
 

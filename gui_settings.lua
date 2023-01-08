@@ -122,9 +122,7 @@ local function whodis_create_text_options(parent_frame, anchor_frame, y_offset)
 	btn:SetWidth(80)
 	
 	-- dont use the default tooltipText field as it doesn't format correctly
-	btn.HelpText = WHODIS_NS.SLASH["rank-filter"].help
-	btn:HookScript("OnEnter", WHODIS_NS.tooltip_helper_enter)
-	btn:HookScript("OnLeave", WHODIS_NS.tooltip_helper_leave)
+	WHODIS_NS.tooltip_helper(btn, WHODIS_NS.SLASH["rank-filter"].help)
 	
 	btn:SetScript("OnClick", rank_filter_setter)
 
