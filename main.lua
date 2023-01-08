@@ -20,10 +20,13 @@ local function whodis_setup_account_db(addon_version)
 		WHODIS_ADDON_DATA.SETTINGS = { }
 	end
 	
+	if not WHODIS_ADDON_DATA.SETTINGS then
+		WHODIS_ADDON_DATA.SETTINGS = { }
+	end
 	
-	-- Overides are global across all characters and realms
-	if not WHODIS_ADDON_DATA.OVERRIDES then
-		WHODIS_ADDON_DATA.OVERRIDES = { }
+	-- New note database that combines characters across all guilds
+	if not WHODIS_ADDON_DATA.CHARACTER_DB then
+		WHODIS_ADDON_DATA.CHARACTER_DB = { }
 	end
 	
 	

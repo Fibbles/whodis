@@ -5,23 +5,16 @@ local ADDON_NAME, WHODIS_NS = ...
 
 -- Helpers
 
-local function whodis_rank_ok(rank)
-
-	return (WHODIS_ADDON_DATA_CHAR.SETTINGS.ALT_RANK == nil or 
-		    rank == "n/a" or
-		    WHODIS_ADDON_DATA_CHAR.SETTINGS.ALT_RANK == rank:lower())
-end
-
-local function whodis_safe_get_roster_info(name)
+local function whodis_safe_get_formatted_note(name)
 
 	-- Blizzard is inconsistent about passing realm names as part of author names in chat filters
 	-- Roster lookups need a realm name so this function works around that behaviour
 
 	if WHODIS_NS.name_has_realm(name) then
-		return WHODIS_ADDON_DATA_CHAR.ROSTER[name]
+		return WHODIS_NS.FORMATTED_NOTE_DB[name]
 	else
 		-- we have to assume the name is from our own realm
-		return WHODIS_ADDON_DATA_CHAR.ROSTER[WHODIS_NS.format_name_full(name)]
+		return WHODIS_NS.FORMATTED_NOTE_DB[WHODIS_NS.format_name_full(name)]
 	end	
 end
 
@@ -30,52 +23,44 @@ end
 
 local function whodis_chat_manip(self, event, msg, author, ...)
 
-	local roster_info = whodis_safe_get_roster_info(author)
+	local note = whodis_safe_get_formatted_note(author)
 	
-	if roster_info then
-		local rank, _, note = unpack(roster_info)
-			
-		-- if we're checking for rank
-		if whodis_rank_ok(rank) and note and note ~= '' then		
-			local msg_mod = nil
-			if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
-				msg_mod = "|cffd3d3d3(" .. note .. ")|r: " .. msg
-			else
-				msg_mod = "(" .. note .. "): " .. msg
-			end
-			return false, msg_mod, author, ...
+	if note and note ~= "" then		
+		local msg_mod = nil
+
+		if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
+			msg_mod = "|cffd3d3d3(" .. note .. ")|r: " .. msg
+		else
+			msg_mod = "(" .. note .. "): " .. msg
 		end
+
+		return false, msg_mod, author, ...
 	end
-	
+
 	return false, msg, author, ...
 end
 
 local function whodis_login_manip(self, event, msg, ...)
 
 	local link, data, name = strmatch(msg, "(|Hplayer:(.-)|h%[(.-)%]|h)")
+
 	if link then
+		local note = whodis_safe_get_formatted_note(name)
 		
-		local roster_info = whodis_safe_get_roster_info(name)
+		if note and note ~= "" then
+			local search_name = "|h%[" .. name .. "%]|h"
 		
-		if roster_info then
-			local rank, _, note = unpack(roster_info)
-				
-			-- if we're checking for rank
-			if whodis_rank_ok(rank) and note and note ~= '' then
-			
-				local search_name = "|h%[" .. name .. "%]|h"
-			
-				local format_note = nil
-				if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
-					format_note = search_name .. " |cffd3d3d3%(" .. note .. "%)|r"
-				else
-					format_note = search_name .. " %(" .. note .. "%)"
-				end
-								
-				local msg_mod = gsub(msg, search_name, format_note)
-				
-				return false, msg_mod, ...
+			local bracket_note = nil
+
+			if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
+				bracket_note = search_name .. " |cffd3d3d3%(" .. note .. "%)|r"
+			else
+				bracket_note = search_name .. " %(" .. note .. "%)"
 			end
+							
+			local msg_mod = gsub(msg, search_name, bracket_note)
+			
+			return false, msg_mod, ...
 		end
 	end
 	
@@ -123,21 +108,18 @@ GameTooltip:HookScript("OnTooltipSetUnit", function(self)
 		end
 		
 		if unit_name then
-			
-			local roster_info = whodis_safe_get_roster_info(unit_name)
-		
-			if roster_info then
-				local rank, _, note = unpack(roster_info)
-		
-				if whodis_rank_ok(rank) and note and note ~= '' then
-					local formatted_note = nil
-					if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
-						formatted_note  = " |cffa9a9a9(" .. note .. ")|r"
-					else
-						formatted_note  = " (" .. note .. ")"
-					end
-					self:AppendText(formatted_note)
+			local note = whodis_safe_get_formatted_note(unit_name)
+				
+			if note and note ~= "" then
+				local bracket_note = nil
+
+				if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
+					bracket_note  = " |cffa9a9a9(" .. note .. ")|r"
+				else
+					bracket_note  = " (" .. note .. ")"
 				end
+
+				self:AppendText(bracket_note)
 			end
 		end
 	end

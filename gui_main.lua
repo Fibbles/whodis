@@ -274,7 +274,7 @@ function WHODIS_NS.update_gui_note_grid(grid_frame, page_num)
 	-- sort the roster alpabetically
 	
 	local names = {}
-	for char_name, _ in pairs(WHODIS_ADDON_DATA_CHAR.ROSTER) do
+	for char_name, _ in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
 		table.insert(names, char_name)
 	end
 	table.sort(names)
@@ -306,20 +306,35 @@ function WHODIS_NS.update_gui_note_grid(grid_frame, page_num)
 			row:Show()
 			
 			row.name_label:SetText(names[iii])
+
+			local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[names[iii]]
 			
-			local rank, _, note = unpack(WHODIS_ADDON_DATA_CHAR.ROSTER[names[iii]])
+			local note = WHODIS_NS.FORMATTED_NOTE_DB[names[iii]] or character_info.override_note or character_info.guild_note or ""
 			
 			row.note_eb:SetText(note)
 			row.note_eb.read_only_text = note
 			row.note_eb:SetCursorPosition(0)
-			
-			-- custom notes always have rank of "n/a"
-			if rank ~= "n/a" then
-				row.default_button:Disable() -- no custom note, it's already on the default
-				row.hide_button:Enable()
-			else
+
+			if character_info.hidden then
+				row.note_eb:Hide()
+				row.set_button:Disable()
 				row.default_button:Enable()
-				row.hide_button:Disable() -- can't hide a custom note, only default/remove it
+				row.hide_button:Disable()
+			else
+				row.note_eb:Show()
+				row.set_button:Enable()
+
+				if character_info.guild_note then
+					row.hide_button:Enable()
+				else
+					row.hide_button:Disable()
+				end
+
+				if character_info.override_note then
+					row.default_button:Enable()
+				else
+					row.default_button:Disable()
+				end
 			end
 		else
 			row:Hide()

@@ -8,19 +8,19 @@ if not WHODIS_NS.SLASH then
 	WHODIS_NS.SLASH = {}
 end
 
-local function whodis_print_roster()
+local function whodis_print_character_db()
 
 	WHODIS_NS.msg_generic("Roster - Guild notes and custom notes")
-	for name, roster_info in pairs(WHODIS_ADDON_DATA_CHAR.ROSTER) do
-		local rank, class, note = unpack(roster_info)
-		print("name: " .. name .. " || rank: " .. rank .. " || class: " .. class .. " || note: " .. note)
+	for name, char_info in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
+		print("name: " .. name .. " || hidden: " .. char_info.hidden .. " || rank: ".. char_info.rank .. 
+			  " || class: " .. char_info.class .. " || guild note: " .. char_info.guild_note .. " || custom note: " .. char_info.override_note)
 	end
 end
 
-WHODIS_NS.SLASH["print-roster"] = {
-func = whodis_print_roster,
+WHODIS_NS.SLASH["print-character-db"] = {
+func = whodis_print_character_db,
 dev = true,
-help = "Print a list of characters we will display a note for (guild roster + overrides)."
+help = "Print a list of characters win the database (guild rosters + custom notes)."
 }
 
 
@@ -36,11 +36,12 @@ local function whodis_print_player(name)
 		full_name = WHODIS_NS.format_name_full(name)
 	end
 	
-	local roster_info = WHODIS_ADDON_DATA_CHAR.ROSTER[full_name]
+	local char_info = WHODIS_ADDON_DATA.CHARACTER_DB[full_name]
 	
-	if roster_info then
-		local rank, class, note = unpack(roster_info)
-		WHODIS_NS.msg_generic("name: " .. full_name .. " || rank: " .. rank .. " || class: " .. class .. " || note: " .. note)
+	if char_info then
+		WHODIS_NS.msg_generic("name: " .. name .. " || hidden: " .. char_info.hidden .. " || rank: ".. char_info.rank .. 
+							  " || class: " .. char_info.class .. " || guild note: " .. char_info.guild_note .. 
+							  " || custom note: " .. char_info.override_note)
 	else
 		WHODIS_NS.warn_generic("No player of that name saved in the roster.")
 	end
@@ -54,18 +55,18 @@ help = "Print info about a specific character.\nCharacter name is not case sensi
 }
 
 
-local function whodis_print_overrides()
+local function whodis_print_formatted_notes()
 
-	WHODIS_NS.msg_generic("Custom notes only")
-	for name, note in pairs(WHODIS_ADDON_DATA.OVERRIDES) do
+	WHODIS_NS.msg_generic("Notes that have been formatted for display")
+	for name, note in pairs(WHODIS_NS.FORMATTED_NOTE_DB) do
 		print("name: " .. name .. " | note: " .. note)
 	end
 end
 
-WHODIS_NS.SLASH["print-overrides"] = {
-func = whodis_print_overrides,
+WHODIS_NS.SLASH["print-formatted-notes"] = {
+func = whodis_print_formatted_notes,
 dev = true,
-help = "Print a list of characters with custom notes."
+help = "Print a list of notes that have been formatted for display based on user settings."
 }
 
 
