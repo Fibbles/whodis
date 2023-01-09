@@ -83,13 +83,38 @@ local function whodis_colour_note_with_main_class(note)
 	end
 end
 
+local function whodis_is_char_filtered_by_rank_whitelist(char_info)
+
+	-- if the whitelist is nil, rank filtering is disabled and all ranks are allowed
+	if WHODIS_ADDON_DATA.SETTINGS.RANK_WHITELIST == nil then
+		return false
+	end
+
+	-- custom notes aren't affected by the whitelist and always show
+	if char_info.override_note then
+		return false
+	end
+
+	if char_info.rank and char_info.rank ~= "" then
+		if WHODIS_ADDON_DATA.SETTINGS.RANK_WHITELIST[char_info.rank:lower()] then
+			return false
+		end
+	end
+
+	return true
+end
+
+WHODIS_NS.is_char_filtered_by_rank_whitelist = whodis_is_char_filtered_by_rank_whitelist
+
 local function whodis_generate_formatted_notes()
 
 	WHODIS_NS.FORMATTED_NOTE_DB = {}
 
 	for name, character_info in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
 		
-		if not character_info.hidden then
+		local is_filtered = whodis_is_char_filtered_by_rank_whitelist(character_info)
+
+		if not character_info.hidden and not is_filtered then
 
 			local working_note = character_info.override_note or character_info.guild_note
 

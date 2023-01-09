@@ -8,27 +8,58 @@ if not WHODIS_NS.SLASH then
 	WHODIS_NS.SLASH = {}
 end
 
-local function whodis_set_rank_filter(rank) -- pass nil to disable
+local function whodis_generate_rank_whitelist(raw_whitelist_string)
 
-	if rank and rank ~= "" then
-		WHODIS_ADDON_DATA_CHAR.SETTINGS.ALT_RANK = rank:lower()
-		WHODIS_NS.msg_generic("Only showing guild notes for guild members with the rank '" .. rank .. "'.")
-	else
-		WHODIS_ADDON_DATA_CHAR.SETTINGS.ALT_RANK = nil
-		WHODIS_NS.msg_generic("Showing guild notes for all guild members regardless of rank.")
+	local raw_tbl = strsplittable(",", raw_whitelist_string)
+
+	local rank_whitelist = {}
+
+	-- removes any whitespace from the front or back of the rank, but leaves spaces between words intact allowing for multi-word ranks
+	for key, value in pairs(raw_tbl) do
+		-- setting the rank as the key lets us quickly check for it's existance with a hash lookup
+		local clean_key = WHODIS_NS.trim(value:lower())
+
+		if clean_key ~= "" then
+			rank_whitelist[clean_key] = true
+		end
 	end
+
+	-- if the whitelist doesn't have any entries, we want to return nil to disable whitelist filtering
+	if next(rank_whitelist) == nil then
+		rank_whitelist = nil
+	end
+
+	return rank_whitelist
 end
 
-WHODIS_NS.SLASH["rank-filter"] = {
-func = whodis_set_rank_filter,
-arg_str = "RankName",
-help = [[Only show notes for guildies with this rank (off by default).
+local function whodis_set_rank_whitelist(rank_whitelist) -- pass nil to disable
+
+	if rank_whitelist and rank_whitelist ~= "" then
+		WHODIS_ADDON_DATA.SETTINGS.RANK_WHITELIST = whodis_generate_rank_whitelist(rank_whitelist)
+		WHODIS_NS.msg_generic("Only showing guild notes for guild members with one of the following ranks: '" .. rank_whitelist .. "'.")
+	else
+		WHODIS_ADDON_DATA.SETTINGS.RANK_WHITELIST = nil
+		WHODIS_NS.msg_generic("Showing guild notes for all guild members regardless of rank.")
+	end
+
+	WHODIS_NS.build_roster(true)
+end
+
+WHODIS_NS.SLASH["rank-whitelist"] = {
+func = whodis_set_rank_whitelist,
+arg_str = "RankName1, RankName2, ...",
+help = [[Only show notes for guildies with a rank listed in the whitelist (off by default).
 You may only want to display notes against players with rank 'alt' for example.
-Leave the filter blank to disable it and show notes for all guildies.]]
+The whitelist is comma separated and not case sensitive.
+Leave the whitelist blank to disable the feature and show notes for all guildies regardless of rank.]]
+}
+WHODIS_NS.SLASH["rank-filter"] = {
+deprecated = true,
+alias = "rank-whitelist"
 }
 WHODIS_NS.SLASH["rank"] = {
 deprecated = true,
-alias = "rank-filter"
+alias = "rank-whitelist"
 }
 
 

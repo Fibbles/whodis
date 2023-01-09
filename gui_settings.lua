@@ -88,32 +88,43 @@ local function whodis_create_text_options(parent_frame, anchor_frame, y_offset)
 	local label = parent_frame:CreateFontString(nil , "BORDER", "GameFontWhite")
 	label:SetJustifyH("LEFT")
 	label:SetPoint("TOPLEFT", anchor_frame, "BOTTOMLEFT", 0, y_offset)
-	label:SetText("Rank Filter")
+	label:SetText("Rank Whitelist")
 	
 	local eb = CreateFrame("EditBox", nil, parent_frame, "InputBoxTemplate")
 	eb:SetSize(200, 22)
 	eb:SetAutoFocus(false)
 	eb:SetMultiLine(false)
-	--eb:SetMaxLetters(30)
 	eb:SetPoint("LEFT", label, "RIGHT", x_padding, 0)
 			
-	local function rank_filter_getter()
+	local function rank_whitelist_getter()
 		eb:ClearFocus()
-		eb:SetText(WHODIS_ADDON_DATA_CHAR.SETTINGS.ALT_RANK or "")
+
+		if (WHODIS_ADDON_DATA.SETTINGS.RANK_WHITELIST) then
+			local whitelist_string = ""
+
+			for key, _ in pairs(WHODIS_ADDON_DATA.SETTINGS.RANK_WHITELIST) do
+				whitelist_string = key .. ", " .. whitelist_string
+			end
+
+			eb:SetText(whitelist_string)
+		else
+			eb:SetText("")
+		end
+
 		eb:SetCursorPosition(0)
 	end
 	
-	rank_filter_getter() -- initial set up
-	eb:SetScript("OnShow", rank_filter_getter) -- each time the window is show after set up
-	eb:SetScript("OnEscapePressed", rank_filter_getter)
+	rank_whitelist_getter() -- initial set up
+	eb:SetScript("OnShow", rank_whitelist_getter) -- each time the window is show after set up
+	eb:SetScript("OnEscapePressed", rank_whitelist_getter)
 
 	
-	local function rank_filter_setter()
+	local function rank_whitelist_setter()
 		eb:ClearFocus()
-		WHODIS_NS.SLASH["rank-filter"].func(eb:GetText())
+		WHODIS_NS.SLASH["rank-whitelist"].func(eb:GetText())
 	end
 	
-	eb:SetScript("OnEnterPressed", rank_filter_setter)
+	eb:SetScript("OnEnterPressed", rank_whitelist_setter)
 		
 	local btn = CreateFrame("Button", nil, parent_frame, "UIPanelButtonTemplate")
 ---@diagnostic disable-next-line: param-type-mismatch
@@ -122,9 +133,9 @@ local function whodis_create_text_options(parent_frame, anchor_frame, y_offset)
 	btn:SetWidth(80)
 	
 	-- dont use the default tooltipText field as it doesn't format correctly
-	WHODIS_NS.tooltip_helper(btn, WHODIS_NS.SLASH["rank-filter"].help)
+	WHODIS_NS.tooltip_helper(btn, WHODIS_NS.SLASH["rank-whitelist"].help)
 	
-	btn:SetScript("OnClick", rank_filter_setter)
+	btn:SetScript("OnClick", rank_whitelist_setter)
 
 	return label
 end
@@ -138,20 +149,20 @@ function WHODIS_NS.create_gui_settings_frame(parent_frame, x_offset, y_offset, y
 		
 	local title_header = WHODIS_NS.create_gui_title_header(gui_settings_frame, x_offset, y_section_padding)
 	
-	local account_opts_label = gui_settings_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
-	account_opts_label:SetJustifyH("LEFT")
-	account_opts_label:SetPoint("TOPLEFT", title_header, "BOTTOMLEFT", 0, y_section_padding)
-	account_opts_label:SetText("Per Account Settings")
+	local general_opts_label = gui_settings_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
+	general_opts_label:SetJustifyH("LEFT")
+	general_opts_label:SetPoint("TOPLEFT", title_header, "BOTTOMLEFT", 0, y_section_padding)
+	general_opts_label:SetText("General Settings")
 
-	local bool_opt_anchor = whodis_create_bool_options(gui_settings_frame, account_opts_label, y_offset)
+	local bool_opt_anchor = whodis_create_bool_options(gui_settings_frame, general_opts_label, y_offset)
 	
-	local char_opts_label = gui_settings_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
-	char_opts_label:SetJustifyH("LEFT")
+	local advanced_opts_label = gui_settings_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
+	advanced_opts_label:SetJustifyH("LEFT")
 ---@diagnostic disable-next-line: param-type-mismatch
-	char_opts_label:SetPoint("TOPLEFT", bool_opt_anchor, "BOTTOMLEFT", 0, y_section_padding)
-	char_opts_label:SetText("Per Character Settings")
+	advanced_opts_label:SetPoint("TOPLEFT", bool_opt_anchor, "BOTTOMLEFT", 0, y_section_padding)
+	advanced_opts_label:SetText("Advanced Settings")
 	
-	local text_opt_anchor = whodis_create_text_options(gui_settings_frame, char_opts_label, y_offset)
+	local text_opt_anchor = whodis_create_text_options(gui_settings_frame, advanced_opts_label, y_offset)
 	
 	InterfaceOptions_AddCategory(gui_settings_frame)
 	

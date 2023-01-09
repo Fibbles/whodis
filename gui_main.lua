@@ -115,7 +115,6 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	row_frame.note_eb:SetSize(210, 22)
 	row_frame.note_eb:SetAutoFocus(false)
 	row_frame.note_eb:SetMultiLine(false)
-	--note_eb:SetMaxLetters(30)
 	row_frame.note_eb:SetPoint("LEFT", row_frame.name_label, "RIGHT", x_padding, 0)
 	row_frame.note_eb:SetText("Some Note")
 	row_frame.note_eb:SetCursorPosition(0)
@@ -272,7 +271,7 @@ local function whodis_update_note_row(row, name)
 
 	local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[name]
 	
-	local note = WHODIS_NS.FORMATTED_NOTE_DB[name] or character_info.override_note or character_info.guild_note or ""
+	local note = WHODIS_NS.FORMATTED_NOTE_DB[name] or ""
 	
 	row.note_eb:SetText(note)
 	row.note_eb.read_only_text = note
@@ -284,8 +283,6 @@ local function whodis_update_note_row(row, name)
 	row.hide_button:Enable()
 
 	if character_info.hidden then
-		row.note_eb:SetText("")
-		row.note_eb.read_only_text = ""
 		row.hide_button:Disable()
 	elseif character_info.guild_note and not character_info.override_note then
 		-- guild member with only guild note
@@ -304,11 +301,16 @@ end
 function WHODIS_NS.update_gui_note_grid(grid_frame, page_num)
 	
 	-- sort the roster alpabetically
-	
 	local names = {}
-	for char_name, _ in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
-		table.insert(names, char_name)
+
+	for char_name, char_info in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
+
+		-- we don't want to generate rows for any rank that is not whitelisted, so just exclude those names from the alphabetical list immediately
+		if not WHODIS_NS.is_char_filtered_by_rank_whitelist(char_info) then
+			table.insert(names, char_name)
+		end		
 	end
+
 	table.sort(names)
 	
 	local num_names = table.getn(names)

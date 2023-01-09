@@ -4,7 +4,6 @@
 ## Author: Kallisto
 ## Version: 2.1
 ## SavedVariables: WHODIS_ADDON_DATA
-## SavedVariablesPerCharacter: WHODIS_ADDON_DATA_CHAR
 
 slash.lua
 parsing.lua

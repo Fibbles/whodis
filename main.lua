@@ -7,7 +7,7 @@ local ADDON_NAME, WHODIS_NS = ...
 
 WHODIS_NS.INITIALISED = false
 
-local function whodis_setup_account_db(addon_version)
+local function whodis_setup_db(addon_version)
 
 	-- Our saved variables are ready at this point. If there are none, variables will be nil.
 	
@@ -66,44 +66,15 @@ local function whodis_setup_account_db(addon_version)
 end
 
 
-local function whodis_setup_char_db(addon_version)
-
-	-- CHARACTER SPECIFIC DATABASES
-	if not WHODIS_ADDON_DATA_CHAR then
-		WHODIS_ADDON_DATA_CHAR = { }
-	end
-
-	if not WHODIS_ADDON_DATA_CHAR.SETTINGS then
-		WHODIS_ADDON_DATA_CHAR.SETTINGS = { }
-	end
-	
-	-- Rosters are guild specific so are dealt with per character
-	if not WHODIS_ADDON_DATA_CHAR.ROSTER then
-		WHODIS_ADDON_DATA_CHAR.ROSTER = { }
-	end
-	
-	
-	local previous_db_ver = tonumber(WHODIS_ADDON_DATA_CHAR.DB_VERSION or 1.0)
-	WHODIS_ADDON_DATA_CHAR.DB_VERSION = tonumber(addon_version)
-	
-	if previous_db_ver < 2.0 then
-		-- clean up old settings from 1.x versions of the addon		
-		WHODIS_ADDON_DATA_CHAR.ALT_RANK = nil
-	end
-end
-
-
 local function whodis_initialiser()
 
 	local addon_version = GetAddOnMetadata(ADDON_NAME, "Version")
 
-	whodis_setup_account_db(addon_version)
-	whodis_setup_char_db(addon_version)
+	whodis_setup_db(addon_version)
 	
 	-- ensure the local cache is populated, triggers a GUILD_ROSTER_UPDATE
 	-- wont do anything if another addon called this in the last 10s
 	-- this may be an issue on the addon's first run 
-	-- we will eventually have the cached roster in WHODIS_ADDON_DATA_CHAR as a fallback
 	C_GuildInfo.GuildRoster()
 	
 	WHODIS_NS.register_chat_filters()

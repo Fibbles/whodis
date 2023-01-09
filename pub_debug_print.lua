@@ -89,12 +89,12 @@ local function whodis_print_options()
 			print(key .. " : " .. tostring(value))
 		end
 	end
-	
-	WHODIS_NS.msg_generic("Per character options are currently set as:")
-	
-	for key, value in pairs(WHODIS_ADDON_DATA_CHAR.SETTINGS) do
-		if type(value) ~= "table" then
-			print(key .. " : " .. tostring(value))
+
+	if (WHODIS_ADDON_DATA.SETTINGS.RANK_WHITELIST) then
+		WHODIS_NS.msg_generic("Rank whitelist:")
+
+		for key, _ in pairs(WHODIS_ADDON_DATA.SETTINGS.RANK_WHITELIST) do
+			print("'" .. key .. "'")
 		end
 	end
 end
