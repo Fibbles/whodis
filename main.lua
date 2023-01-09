@@ -39,11 +39,21 @@ local function whodis_setup_db(addon_version)
 		WHODIS_ADDON_DATA.COLOUR_BRACKETS = nil
 		WHODIS_ADDON_DATA.HIDE_GREETING = nil
 		WHODIS_ADDON_DATA.NOTE_FILTER = nil
+	end
 		
+	if previous_db_ver < 2.1 and WHODIS_ADDON_DATA.OVERRIDES then
 		-- strip any colour codes that may have polluted the overrides db
 		for key, value in pairs(WHODIS_ADDON_DATA.OVERRIDES) do
-			WHODIS_ADDON_DATA.OVERRIDES[key] = WHODIS_NS.strip_colour_codes_from_str(value)
+			local clean_note = WHODIS_NS.strip_colour_codes_from_str(value)
+
+			if clean_note ~= "" then
+				WHODIS_ADDON_DATA.CHARACTER_DB[key] = { override_note = clean_note }
+			else
+				WHODIS_ADDON_DATA.CHARACTER_DB[key] = { hidden = true }
+			end
 		end
+
+		WHODIS_ADDON_DATA.OVERRIDES = nil
 	end
 	
 	

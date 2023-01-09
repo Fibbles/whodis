@@ -33,11 +33,11 @@ local function whodis_poll_guild_roster(silent)
 		local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[name]
 		
 		if character_info then	
-			character_info.rank = rank
+			character_info.rank = rank:upper()
 			character_info.class = class
 			character_info.guild_note = guild_note
 		else
-			WHODIS_ADDON_DATA.CHARACTER_DB[name] = {rank = rank, class = class, guild_note = guild_note}
+			WHODIS_ADDON_DATA.CHARACTER_DB[name] = {rank = rank:upper(), class = class, guild_note = guild_note}
 		end
 	end
 	
@@ -96,7 +96,7 @@ local function whodis_is_char_filtered_by_rank_whitelist(char_info)
 	end
 
 	if char_info.rank and char_info.rank ~= "" then
-		if WHODIS_ADDON_DATA.SETTINGS.RANK_WHITELIST[char_info.rank:lower()] then
+		if WHODIS_ADDON_DATA.SETTINGS.RANK_WHITELIST[char_info.rank] then
 			return false
 		end
 	end

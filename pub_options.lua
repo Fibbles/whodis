@@ -17,7 +17,7 @@ local function whodis_generate_rank_whitelist(raw_whitelist_string)
 	-- removes any whitespace from the front or back of the rank, but leaves spaces between words intact allowing for multi-word ranks
 	for key, value in pairs(raw_tbl) do
 		-- setting the rank as the key lets us quickly check for it's existance with a hash lookup
-		local clean_key = WHODIS_NS.trim(value:lower())
+		local clean_key = WHODIS_NS.trim(value:upper())
 
 		if clean_key ~= "" then
 			rank_whitelist[clean_key] = true
