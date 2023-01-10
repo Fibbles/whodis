@@ -82,10 +82,8 @@ local function whodis_initialiser()
 
 	whodis_setup_db(addon_version)
 	
-	-- ensure the local cache is populated, triggers a GUILD_ROSTER_UPDATE
-	-- wont do anything if another addon called this in the last 10s
-	-- this may be an issue on the addon's first run 
-	C_GuildInfo.GuildRoster()
+	-- may not actually build guild notes if we have just logged in but it is required to make cached notes available immediately
+	WHODIS_NS.build_roster(true)
 	
 	WHODIS_NS.register_chat_filters()
 	
@@ -104,7 +102,6 @@ end
 
 local whodis_event_frame = CreateFrame("FRAME"); -- Need a frame to respond to events
 whodis_event_frame:RegisterEvent("ADDON_LOADED"); -- Fired when saved variables are loaded
-whodis_event_frame:RegisterEvent("GUILD_ROSTER_UPDATE")
 
 local function whodis_events(self, event, ...)
 
@@ -113,22 +110,15 @@ local function whodis_events(self, event, ...)
 		if addon == ADDON_NAME then 
 			whodis_initialiser()
 		end 
-	elseif WHODIS_NS.INITIALISED and event == "GUILD_ROSTER_UPDATE" then
-		if not WHODIS_NS.GUILD_ROSTER_LOADED then
-			WHODIS_NS.build_roster(WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING)
-		end
-		-- GUILD_ROSTER_UPDATE can be triggered 2-3 times every time someone logs in or out
-		-- once after log in should be fine, the user can always call /whodis populate to force an update if required
-		-- however if the user stays too long on the login screen we get the event but no guild roster
 
-		whodis_event_frame:UnregisterEvent("GUILD_ROSTER_UPDATE")
+		whodis_event_frame:UnregisterEvent("ADDON_LOADED")
 	end
 end
 
 whodis_event_frame:SetScript("OnEvent", whodis_events)
 
--- the second work around for guild roster updates. try once 30s after log in
--- in theory the roster should have loaded by now
+-- the work around for guild roster updates not being available on login
+-- try once 30s after log in, in theory the roster should have loaded by now
 function whodis_event_frame:on_update(since_last_update)
 
 	if WHODIS_NS.INITIALISED then
@@ -136,10 +126,11 @@ function whodis_event_frame:on_update(since_last_update)
 		self.since_last_update = (self.since_last_update or 0) + since_last_update
 		
 		if (self.since_last_update >= 30) then -- in seconds
+
 			if not WHODIS_NS.GUILD_ROSTER_LOADED then
-				C_GuildInfo.GuildRoster()
 				WHODIS_NS.build_roster(WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING)
 			end
+			
 			whodis_event_frame:SetScript("OnUpdate", nil)
 		end
 	end

@@ -13,6 +13,11 @@ WHODIS_NS.FORMATTED_NOTE_DB = {}
 
 local function whodis_poll_guild_roster(silent)
 		
+	-- ensure the local cache is populated, triggers a GUILD_ROSTER_UPDATE
+	-- wont do anything if another addon called this in the last 10s
+	-- this may be an issue on the addon's first run 
+	C_GuildInfo.GuildRoster()
+
 	local num_members = GetNumGuildMembers()
 	
 	if num_members ~= 0 then 

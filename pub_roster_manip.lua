@@ -165,7 +165,6 @@ Be sure you want to call this because once your notes are gone, they can't be re
 
 local function whodis_populate()
 
-	C_GuildInfo.GuildRoster()
 	WHODIS_NS.warn_generic("Forced an update of the guild roster. This is rate limited to once every 10 seconds by Blizzard so may not have been successful.")
 	WHODIS_NS.build_roster()
 end
