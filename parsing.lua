@@ -129,7 +129,7 @@ local function whodis_generate_formatted_notes()
 				end
 
 				if WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES then 
-						working_note = whodis_colour_note_with_main_class(working_note)
+					working_note = whodis_colour_note_with_main_class(working_note)
 				end
 
 				WHODIS_NS.FORMATTED_NOTE_DB[name] = working_note

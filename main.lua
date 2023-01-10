@@ -75,6 +75,12 @@ local function whodis_setup_db(addon_version)
 	end
 end
 
+local function whodis_delayed_build_roster()
+
+	if not WHODIS_NS.GUILD_ROSTER_LOADED then
+		WHODIS_NS.build_roster(WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING)
+	end
+end
 
 local function whodis_initialiser()
 
@@ -84,6 +90,9 @@ local function whodis_initialiser()
 	
 	-- may not actually build guild notes if we have just logged in but it is required to make cached notes available immediately
 	WHODIS_NS.build_roster(true)
+
+	-- try again 30 seconds later, in theory guild notes should have loaded by this point
+	C_Timer.After(30, whodis_delayed_build_roster)
 	
 	WHODIS_NS.register_chat_filters()
 	
@@ -116,26 +125,5 @@ local function whodis_events(self, event, ...)
 end
 
 whodis_event_frame:SetScript("OnEvent", whodis_events)
-
--- the work around for guild roster updates not being available on login
--- try once 30s after log in, in theory the roster should have loaded by now
-function whodis_event_frame:on_update(since_last_update)
-
-	if WHODIS_NS.INITIALISED then
-	
-		self.since_last_update = (self.since_last_update or 0) + since_last_update
-		
-		if (self.since_last_update >= 30) then -- in seconds
-
-			if not WHODIS_NS.GUILD_ROSTER_LOADED then
-				WHODIS_NS.build_roster(WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING)
-			end
-			
-			whodis_event_frame:SetScript("OnUpdate", nil)
-		end
-	end
-end
-
-whodis_event_frame:SetScript("OnUpdate", whodis_event_frame.on_update)
 
 
