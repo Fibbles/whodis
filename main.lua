@@ -115,12 +115,13 @@ whodis_event_frame:RegisterEvent("ADDON_LOADED"); -- Fired when saved variables 
 local function whodis_events(self, event, ...)
 
 	if event == "ADDON_LOADED" then
+
 		local addon = ...
+
 		if addon == ADDON_NAME then 
 			whodis_initialiser()
+			whodis_event_frame:UnregisterEvent("ADDON_LOADED")
 		end 
-
-		whodis_event_frame:UnregisterEvent("ADDON_LOADED")
 	end
 end
 
