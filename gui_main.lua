@@ -38,7 +38,6 @@ local function whodis_create_note_setter(parent_frame, anchor_frame, y_offset)
 	note_eb:SetAutoFocus(false)
 	note_eb:SetMultiLine(false)
 	--note_eb:SetMaxLetters(30)
----@diagnostic disable-next-line: param-type-mismatch
 	note_eb:SetPoint("LEFT", name_eb, "RIGHT", x_padding, 0)
 	
 		
@@ -77,7 +76,6 @@ local function whodis_create_note_setter(parent_frame, anchor_frame, y_offset)
 
 		
 	local btn = CreateFrame("Button", nil, parent_frame, "UIPanelButtonTemplate")
----@diagnostic disable-next-line: param-type-mismatch
 	btn:SetPoint("LEFT", note_eb, "RIGHT", x_padding, 0)
 	btn:SetText("Set")
 	btn:SetWidth(40)
@@ -143,7 +141,6 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 
 		
 	row_frame.set_button = CreateFrame("Button", nil, row_frame, "UIPanelButtonTemplate")
----@diagnostic disable-next-line: param-type-mismatch
 	row_frame.set_button:SetPoint("LEFT", row_frame.note_eb, "RIGHT", x_padding, 0)
 	row_frame.set_button:SetText("Set")
 	row_frame.set_button:SetWidth(40)
@@ -154,7 +151,6 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	
 	
 	row_frame.default_button = CreateFrame("Button", nil, row_frame, "UIPanelButtonTemplate")
----@diagnostic disable-next-line: param-type-mismatch
 	row_frame.default_button:SetPoint("LEFT", row_frame.set_button, "RIGHT", 0, 0)
 	row_frame.default_button:SetText("Default")
 	row_frame.default_button:SetWidth(60)
@@ -175,7 +171,6 @@ local function whodis_create_note_row(parent_frame, anchor_frame, y_offset, num_
 	
 
 	row_frame.hide_button = CreateFrame("Button", nil, row_frame, "UIPanelButtonTemplate")
----@diagnostic disable-next-line: param-type-mismatch
 	row_frame.hide_button:SetPoint("LEFT", row_frame.default_button, "RIGHT", 0, 0)
 	row_frame.hide_button:SetText("Hide")
 	row_frame.hide_button:SetWidth(40)

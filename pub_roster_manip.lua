@@ -73,7 +73,11 @@ local function whodis_set_override(name, note)
 		note = WHODIS_NS.strip_colour_codes_from_str(note)
 	
 		local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[full_name] or {}
+		
 		character_info.override_note = note
+		-- presumably if we're setting a custom note, it shouldn't stay hidden
+		character_info.hidden = nil
+		
 		WHODIS_ADDON_DATA.CHARACTER_DB[full_name] = character_info
 
 		WHODIS_NS.msg_generic("Custom note set for " .. full_name .. ".")

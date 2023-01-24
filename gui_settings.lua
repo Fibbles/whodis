@@ -127,7 +127,6 @@ local function whodis_create_text_options(parent_frame, anchor_frame, y_offset)
 	eb:SetScript("OnEnterPressed", rank_whitelist_setter)
 		
 	local btn = CreateFrame("Button", nil, parent_frame, "UIPanelButtonTemplate")
----@diagnostic disable-next-line: param-type-mismatch
 	btn:SetPoint("LEFT", eb, "RIGHT", x_padding, 0)
 	btn:SetText("Set")
 	btn:SetWidth(80)
@@ -158,7 +157,6 @@ function WHODIS_NS.create_gui_settings_frame(parent_frame, x_offset, y_offset, y
 	
 	local advanced_opts_label = gui_settings_frame:CreateFontString(nil , "BORDER", "GameFontNormal")
 	advanced_opts_label:SetJustifyH("LEFT")
----@diagnostic disable-next-line: param-type-mismatch
 	advanced_opts_label:SetPoint("TOPLEFT", bool_opt_anchor, "BOTTOMLEFT", 0, y_section_padding)
 	advanced_opts_label:SetText("Advanced Settings")
 	
