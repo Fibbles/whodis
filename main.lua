@@ -7,7 +7,8 @@ local ADDON_NAME, WHODIS_NS = ...
 
 WHODIS_NS.INITIALISED = false
 
-local function whodis_setup_db(addon_version)
+
+local function whodis_setup_db()
 
 	-- Our saved variables are ready at this point. If there are none, variables will be nil.
 	
@@ -29,11 +30,7 @@ local function whodis_setup_db(addon_version)
 		WHODIS_ADDON_DATA.CHARACTER_DB = { }
 	end
 	
-	
-	local previous_db_ver = tonumber(WHODIS_ADDON_DATA.DB_VERSION or 1.0)
-	WHODIS_ADDON_DATA.DB_VERSION = tonumber(addon_version)
-	
-	if previous_db_ver < 2.0 then
+	if WHODIS_NS.VERSION.is_less(WHODIS_NS.VERSION.PREVIOUS, 2.0) then
 		-- clean up old settings from 1.x versions of the addon
 		WHODIS_ADDON_DATA.COLOUR_NAMES = nil
 		WHODIS_ADDON_DATA.COLOUR_BRACKETS = nil
@@ -41,7 +38,7 @@ local function whodis_setup_db(addon_version)
 		WHODIS_ADDON_DATA.NOTE_FILTER = nil
 	end
 		
-	if previous_db_ver < 2.1 and WHODIS_ADDON_DATA.OVERRIDES then
+	if WHODIS_NS.VERSION.is_less(WHODIS_NS.VERSION.PREVIOUS, 2.1) and WHODIS_ADDON_DATA.OVERRIDES then
 		-- strip any colour codes that may have polluted the overrides db
 		for key, value in pairs(WHODIS_ADDON_DATA.OVERRIDES) do
 			local clean_note = WHODIS_NS.strip_colour_codes_from_str(value)
@@ -84,9 +81,9 @@ end
 
 local function whodis_initialiser()
 
-	local addon_version = GetAddOnMetadata(ADDON_NAME, "Version")
+	WHODIS_NS.VERSION.update_version_number()
 
-	whodis_setup_db(addon_version)
+	whodis_setup_db()
 	
 	-- may not actually build guild notes if we have just logged in but it is required to make cached notes available immediately
 	WHODIS_NS.build_roster(true)
@@ -98,11 +95,9 @@ local function whodis_initialiser()
 	
 	WHODIS_NS.create_gui_frames()
 
-	if not WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING then
-		WHODIS_NS.msg_init(addon_version)
-	end
-	
 	WHODIS_NS.INITIALISED = true
+
+	WHODIS_NS.msg_init()
 end
 
 

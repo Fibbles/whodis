@@ -10,6 +10,7 @@ parsing.lua
 display.lua
 utility.lua
 messages.lua
+version.lua
 pub_debug_print.lua
 pub_help.lua
 pub_options.lua

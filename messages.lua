@@ -36,6 +36,15 @@ end
 
 
 
-function WHODIS_NS.msg_init(addon_version)
-	whodis_msg_generic("v" .. addon_version .. " loaded.")
+function WHODIS_NS.msg_init()
+
+	if WHODIS_NS.INITIALISED then
+
+		if not WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING then
+
+			whodis_msg_generic("v" .. WHODIS_NS.VERSION.CURRENT .. " loaded.")
+		end
+	else
+		whodis_warn_generic("Failed to initialise.")
+	end
 end
