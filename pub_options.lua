@@ -149,3 +149,21 @@ func = whodis_hide_greeting,
 arg_str = "True/False",
 help = "If set to true, addon messages will not be displayed in the chat window during loading."
 }
+
+
+local function whodis_hide_player_note(bool_str)
+
+	local bool = bool_str_parser(bool_str)
+
+	if bool ~= nil then
+		WHODIS_ADDON_DATA.SETTINGS.HIDE_PLAYER_NOTE = bool
+		WHODIS_NS.msg_generic("Automatic hiding of player character notes is now set to '" .. tostring(bool) .. "'.")
+		WHODIS_NS.build_roster(true)
+	end
+end
+
+WHODIS_NS.SLASH["hide-player-note"] = {
+func = whodis_hide_player_note,
+arg_str = "True/False",
+help = "If set to true, the addon will automatically hide notes for the character you are currently playing."
+}

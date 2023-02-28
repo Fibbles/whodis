@@ -111,13 +111,23 @@ end
 
 WHODIS_NS.is_char_filtered_by_rank_whitelist = whodis_is_char_filtered_by_rank_whitelist
 
+local function whodis_is_filtered_as_player_char(name)
+
+	if not WHODIS_ADDON_DATA.SETTINGS.HIDE_PLAYER_NOTE then
+		return false
+	else
+		return (name == WHODIS_NS.CURRENT_PLAYER_CHARACTER)
+	end
+end
+
+
 local function whodis_generate_formatted_notes()
 
 	WHODIS_NS.FORMATTED_NOTE_DB = {}
 
 	for name, character_info in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
 		
-		local is_filtered = whodis_is_char_filtered_by_rank_whitelist(character_info)
+		local is_filtered = whodis_is_char_filtered_by_rank_whitelist(character_info) or whodis_is_filtered_as_player_char(name)
 
 		if not character_info.hidden and not is_filtered then
 

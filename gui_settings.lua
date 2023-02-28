@@ -29,6 +29,11 @@ local function whodis_create_bool_options(parent_frame, anchor_frame, y_offset)
 		["Hide Greeting"] = {
 			command = WHODIS_NS.SLASH["hide-greeting"],
 			getter = function() return WHODIS_ADDON_DATA.SETTINGS.HIDE_GREETING end
+		},
+
+		["Hide Player Note"] = {
+			command = WHODIS_NS.SLASH["hide-player-note"],
+			getter = function() return WHODIS_ADDON_DATA.SETTINGS.HIDE_PLAYER_NOTE end
 		}
 	}
 	

@@ -70,6 +70,17 @@ local function whodis_setup_db()
 	if WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER == nil then
 		WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER = true
 	end
+
+	if WHODIS_ADDON_DATA.SETTINGS.HIDE_PLAYER_NOTE == nil then
+		WHODIS_ADDON_DATA.SETTINGS.HIDE_PLAYER_NOTE = true
+	end
+end
+
+local function whodis_set_player_character()
+
+		local name = UnitName("player")
+
+		WHODIS_NS.CURRENT_PLAYER_CHARACTER = WHODIS_NS.format_name_full(name)
 end
 
 local function whodis_delayed_build_roster()
@@ -85,6 +96,8 @@ local function whodis_initialiser()
 
 	whodis_setup_db()
 	
+	whodis_set_player_character()
+
 	-- may not actually build guild notes if we have just logged in but it is required to make cached notes available immediately
 	WHODIS_NS.build_roster(true)
 
