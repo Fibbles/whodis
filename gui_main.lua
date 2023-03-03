@@ -265,6 +265,8 @@ local function whodis_update_note_row(row, name)
 	row.name_label:SetText(name)
 
 	local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[name]
+
+	local is_guild_member = (character_info.rank ~= nil)
 	
 	local note = WHODIS_NS.FORMATTED_NOTE_DB[name] or ""
 	
@@ -279,17 +281,21 @@ local function whodis_update_note_row(row, name)
 
 	if character_info.hidden then
 		row.hide_button:Disable()
-	elseif character_info.guild_note and not character_info.override_note then
-		-- guild member with only guild note
-		row.default_button:Disable()
-	elseif not character_info.guild_note and character_info.override_note then
-		-- none guild member with custom note
+	elseif is_guild_member then
+
+		-- guild note is show by default anyway if there is no override note
+		if not character_info.override_note then
+			row.default_button:Disable()
+		end
+
+		-- no point hiding something if it has no note anyway
+		if not character_info.guild_note then
+			row.hide_button:Disable()
+		end
+	elseif not is_guild_member and character_info.override_note then
+		-- none guild members can only have notes set or deleted, there's no default note and no benefit to hiding them
 		row.hide_button:Disable()
 		row.default_button:SetText("Delete")
-	elseif not character_info.guild_note and not character_info.override_note then
-		-- guild member but with no guild note or custom note
-		row.hide_button:Disable()
-		row.default_button:Disable()
 	end
 end
 
