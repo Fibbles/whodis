@@ -8,9 +8,7 @@ local ADDON_NAME, WHODIS_NS = ...
 WHODIS_NS.INITIALISED = false
 
 
-local function whodis_setup_db()
-
-	-- Our saved variables are ready at this point. If there are none, variables will be nil.
+local function whodis_initialise_db()
 	
 	-- ACCOUNT WIDE DATABASES
 	if not WHODIS_ADDON_DATA then
@@ -21,15 +19,16 @@ local function whodis_setup_db()
 		WHODIS_ADDON_DATA.SETTINGS = { }
 	end
 	
-	if not WHODIS_ADDON_DATA.SETTINGS then
-		WHODIS_ADDON_DATA.SETTINGS = { }
-	end
-	
 	-- New note database that combines characters across all guilds
 	if not WHODIS_ADDON_DATA.CHARACTER_DB then
 		WHODIS_ADDON_DATA.CHARACTER_DB = { }
 	end
-	
+end
+
+local function whodis_convert_db_to_latest()
+
+	WHODIS_NS.VERSION.update_version_number()
+
 	if WHODIS_NS.VERSION.is_less(WHODIS_NS.VERSION.PREVIOUS, 2.0) then
 		-- clean up old settings from 1.x versions of the addon
 		WHODIS_ADDON_DATA.COLOUR_NAMES = nil
@@ -52,9 +51,10 @@ local function whodis_setup_db()
 
 		WHODIS_ADDON_DATA.OVERRIDES = nil
 	end
-	
-	
-	-- Default settings
+end
+
+local function whodis_populate_default_settings()
+
 	if WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES == nil then
 		WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES = true
 	end
@@ -92,9 +92,11 @@ end
 
 local function whodis_initialiser()
 
-	WHODIS_NS.VERSION.update_version_number()
+	whodis_initialise_db()
 
-	whodis_setup_db()
+	whodis_convert_db_to_latest()
+
+	whodis_populate_default_settings()
 	
 	whodis_set_player_character()
 

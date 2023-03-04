@@ -3,7 +3,9 @@ local ADDON_NAME, WHODIS_NS = ...
 
 -- Version number handling
 
-WHODIS_NS.VERSION = {}
+if not WHODIS_NS.VERSION then
+    WHODIS_NS.VERSION = {}
+end
 
 
 function WHODIS_NS.VERSION.update_version_number()
