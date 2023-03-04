@@ -30,7 +30,7 @@ local function whodis_poll_guild_roster(silent)
 		-- dont waste space storing blank notes
 		local guild_note = nil
 		if note ~= "" then
-			guild_note = note
+			guild_note = WHODIS_NS.trim(note)
 		end
 				
 		-- keys are case sensitive
@@ -53,31 +53,50 @@ end
 
 local function whodis_apply_note_filter(note)
 
+	-- notes are already trimmed
 	if note and note ~= "" then
-		-- e.g. convert "Kallisto's alt" to "Kallisto"
-		note = gsub(note, "'s ALT$", "")
-		note = gsub(note, "'s Alt$", "")
-		note = gsub(note, "'s alt$", "")
-		note = gsub(note, " ALT$", "")
-		note = gsub(note, " Alt$", "")
-		note = gsub(note, " alt$", "")
 		
-		note = gsub(note, "'s MAIN$", "")
-		note = gsub(note, "'s Main$", "")
-		note = gsub(note, "'s main$", "")
-		note = gsub(note, " MAIN$", "")
-		note = gsub(note, " Main$", "")
-		note = gsub(note, " main$", "")
+		-- blank out any notes that are just variations of main or alt with punctuation either side
+		note = gsub(note, "^[%p]*[mM][aA][iI][nN][%p]*$", "")
+		note = gsub(note, "^[%p]*[aA][lL][tT][%p]*$", "")
+
+		-- remove whitespace/punctuation followed by main or alt at the end
+		note = gsub(note, "[%s%p]+[mM][aA][iI][nN]$", "")
+		note = gsub(note, "[%s%p]+[aA][lL][tT]$", "")
+
+		-- e.g. convert "Kallisto's alt" to "Kallisto"
+		note = gsub(note, "'s$", "")
+
+		-- remove main or alt followed by whitespace/punctuation at the beginning
+		note = gsub(note, "^[mM][aA][iI][nN][%s%p]+", "")
+		note = gsub(note, "^[aA][lL][tT][%s%p]+", "")
 	end
 
 	return note
 end
 
-local function whodis_colour_note_with_main_class(note)
+local function whodis_lazy_lookup_full_name(name, lazy_lookup_db)
 
-	local main_name = WHODIS_NS.format_name_full(note)
+	if name and name ~= "" and not WHODIS_NS.name_has_realm(name) then
+
+		if lazy_lookup_db then
+			return lazy_lookup_db[WHODIS_NS.format_name(name)]
+		else
+			return WHODIS_NS.format_name_full(name)
+		end
+	end
+
+	return name
+end
+
+local function whodis_colour_note_with_main_class(note, main_char)
+
+	if not note or note == "" or not main_char or main_char == "" then
+		return note
+	end
 	
-	local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[main_name]
+	local character_info = WHODIS_ADDON_DATA.CHARACTER_DB[main_char]
+
 	if character_info then
 		local _, _, _, main_class_colour = GetClassColor(character_info.class)
 		
@@ -120,11 +139,34 @@ local function whodis_is_filtered_as_player_char(name)
 	end
 end
 
+local function whodis_generate_lazy_character_lookup()
+
+	-- there will be collisions in this db with characters of the same name from different realms
+	-- they shouldn't occur very often within the same guild though, so the benefits outweigh the downsides
+
+	local lazy_lookup_db = {}
+
+	for name, character_info in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
+
+		local short_name, realm = strsplit("-", name)
+
+		if short_name then
+			lazy_lookup_db[short_name] = name
+		end
+	end
+	
+	return lazy_lookup_db
+end
 
 local function whodis_generate_formatted_notes()
 
 	WHODIS_NS.FORMATTED_NOTE_DB = {}
 
+	local lazy_character_lookup_db = nil
+	if WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES then
+		lazy_character_lookup_db = whodis_generate_lazy_character_lookup()
+	end
+	
 	for name, character_info in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
 		
 		local is_filtered = whodis_is_char_filtered_by_rank_whitelist(character_info) or whodis_is_filtered_as_player_char(name)
@@ -133,15 +175,16 @@ local function whodis_generate_formatted_notes()
 
 			local working_note = character_info.override_note or character_info.guild_note
 
-			if working_note then
-				if WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER then
-					working_note = whodis_apply_note_filter(working_note)
-				end
+			if WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER then
+				working_note = whodis_apply_note_filter(working_note)
+			end
 
-				if WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES then 
-					working_note = whodis_colour_note_with_main_class(working_note)
-				end
+			if WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES then 
+				local full_name = whodis_lazy_lookup_full_name(working_note, lazy_character_lookup_db)
+				working_note = whodis_colour_note_with_main_class(working_note, full_name)
+			end
 
+			if working_note and working_note ~= "" then
 				WHODIS_NS.FORMATTED_NOTE_DB[name] = working_note
 			end
 		end
