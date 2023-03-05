@@ -37,10 +37,7 @@ local function whodis_print_player(name)
 		return
 	end
 
-	local full_name = name
-	if not WHODIS_NS.name_has_realm(name) then
-		full_name = WHODIS_NS.format_name_full(name)
-	end
+	local full_name = WHODIS_NS.fuzzy_lookup_full_name(name)
 	
 	local char_info = WHODIS_ADDON_DATA.CHARACTER_DB[full_name]
 	

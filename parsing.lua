@@ -10,6 +10,9 @@ WHODIS_NS.GUILD_ROSTER_LOADED = false
 -- rebuilt each login based on the users formatting settings
 WHODIS_NS.FORMATTED_NOTE_DB = {}
 
+-- lookup table for converting charcter names to character-server names based on best guesses. rebuilt as above.
+WHODIS_NS.FUZZY_CHARACTER_LOOKUP_DB = {}
+
 
 local function whodis_poll_guild_roster(silent)
 		
@@ -28,9 +31,9 @@ local function whodis_poll_guild_roster(silent)
 		local name, rank, _, _, _, _, note, _, _, _, class = GetGuildRosterInfo(iii)
 
 		-- dont waste space storing blank notes
-		local guild_note = nil
-		if note ~= "" then
-			guild_note = WHODIS_NS.trim(note)
+		local guild_note = WHODIS_NS.trim(note)
+		if guild_note == "" then
+			guild_note = nil
 		end
 				
 		-- keys are case sensitive
@@ -50,6 +53,7 @@ local function whodis_poll_guild_roster(silent)
 		WHODIS_NS.msg_generic("Parsed " .. num_members .. " members in the guild roster.")
 	end
 end
+
 
 local function whodis_apply_note_filter(note)
 
@@ -75,19 +79,6 @@ local function whodis_apply_note_filter(note)
 	return note
 end
 
-local function whodis_lazy_lookup_full_name(name, lazy_lookup_db)
-
-	if name and name ~= "" and not WHODIS_NS.name_has_realm(name) then
-
-		if lazy_lookup_db then
-			return lazy_lookup_db[WHODIS_NS.format_name(name)]
-		else
-			return WHODIS_NS.format_name_full(name)
-		end
-	end
-
-	return name
-end
 
 local function whodis_colour_note_with_main_class(note, main_char)
 
@@ -106,6 +97,7 @@ local function whodis_colour_note_with_main_class(note, main_char)
 		return note
 	end
 end
+
 
 local function whodis_is_char_filtered_by_rank_whitelist(char_info)
 
@@ -130,6 +122,7 @@ end
 
 WHODIS_NS.is_char_filtered_by_rank_whitelist = whodis_is_char_filtered_by_rank_whitelist
 
+
 local function whodis_is_filtered_as_player_char(name)
 
 	if not WHODIS_ADDON_DATA.SETTINGS.HIDE_PLAYER_NOTE then
@@ -139,34 +132,64 @@ local function whodis_is_filtered_as_player_char(name)
 	end
 end
 
-local function whodis_generate_lazy_character_lookup()
+
+-- skips checks for speed. not to be used with user input
+local function whodis_fuzzy_lookup_full_name_unsafe(name)
+
+	if WHODIS_NS.name_has_realm(name) then
+		return name
+	else
+		local lookup_name = WHODIS_NS.FUZZY_CHARACTER_LOOKUP_DB[WHODIS_NS.format_name(name)]
+
+		-- lookup may fail if the name is not in the fuzzy db. have to assume the character is on our current realm in that case
+		return lookup_name or WHODIS_NS.format_name_current_realm(name)
+	end
+end
+
+WHODIS_NS.fuzzy_lookup_full_name_unsafe = whodis_fuzzy_lookup_full_name_unsafe
+
+
+local function whodis_fuzzy_lookup_full_name(name)
+
+	if not name or name == "" then
+		return name
+	end
+		
+	return whodis_fuzzy_lookup_full_name_unsafe(name)
+end
+
+WHODIS_NS.fuzzy_lookup_full_name = whodis_fuzzy_lookup_full_name
+
+
+local function whodis_generate_fuzzy_character_lookup()
 
 	-- there will be collisions in this db with characters of the same name from different realms
 	-- they shouldn't occur very often within the same guild though, so the benefits outweigh the downsides
 
-	local lazy_lookup_db = {}
+	local _, player_realm = strsplit("-", WHODIS_NS.CURRENT_PLAYER_CHARACTER)
+
+	WHODIS_NS.FUZZY_CHARACTER_LOOKUP_DB = {}
 
 	for name, character_info in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
 
 		local short_name, realm = strsplit("-", name)
 
 		if short_name then
-			lazy_lookup_db[short_name] = name
+			if not WHODIS_NS.FUZZY_CHARACTER_LOOKUP_DB[short_name] or (realm == player_realm) then
+				-- if there's already a character in the DB with the same name, only overwrite it if the current name is from the player's realm
+				-- this will bias the fuzzy lookups to prefer characters on the player's own realm
+
+				WHODIS_NS.FUZZY_CHARACTER_LOOKUP_DB[short_name] = name
+			end
 		end
 	end
-	
-	return lazy_lookup_db
 end
+
 
 local function whodis_generate_formatted_notes()
 
 	WHODIS_NS.FORMATTED_NOTE_DB = {}
 
-	local lazy_character_lookup_db = nil
-	if WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES then
-		lazy_character_lookup_db = whodis_generate_lazy_character_lookup()
-	end
-	
 	for name, character_info in pairs(WHODIS_ADDON_DATA.CHARACTER_DB) do
 		
 		local is_filtered = whodis_is_char_filtered_by_rank_whitelist(character_info) or whodis_is_filtered_as_player_char(name)
@@ -180,7 +203,7 @@ local function whodis_generate_formatted_notes()
 			end
 
 			if WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES then 
-				local full_name = whodis_lazy_lookup_full_name(working_note, lazy_character_lookup_db)
+				local full_name = whodis_fuzzy_lookup_full_name(working_note)
 				working_note = whodis_colour_note_with_main_class(working_note, full_name)
 			end
 
@@ -191,9 +214,13 @@ local function whodis_generate_formatted_notes()
 	end
 end
 
+
 local function whodis_build_roster(silent)
 
 	whodis_poll_guild_roster(silent)
+
+	whodis_generate_fuzzy_character_lookup()
+
 	whodis_generate_formatted_notes()
 end
 

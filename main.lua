@@ -80,7 +80,7 @@ local function whodis_set_player_character()
 
 		local name = UnitName("player")
 
-		WHODIS_NS.CURRENT_PLAYER_CHARACTER = WHODIS_NS.format_name_full(name)
+		WHODIS_NS.CURRENT_PLAYER_CHARACTER = WHODIS_NS.format_name_current_realm(name)
 end
 
 local function whodis_delayed_build_roster()

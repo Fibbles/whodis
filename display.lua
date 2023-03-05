@@ -10,12 +10,7 @@ local function whodis_safe_get_formatted_note(name)
 	-- Blizzard is inconsistent about passing realm names as part of author names in chat filters
 	-- Roster lookups need a realm name so this function works around that behaviour
 
-	if WHODIS_NS.name_has_realm(name) then
-		return WHODIS_NS.FORMATTED_NOTE_DB[name]
-	else
-		-- we have to assume the name is from our own realm
-		return WHODIS_NS.FORMATTED_NOTE_DB[WHODIS_NS.format_name_full(name)]
-	end	
+	return WHODIS_NS.FORMATTED_NOTE_DB[WHODIS_NS.fuzzy_lookup_full_name_unsafe(name)]
 end
 
 

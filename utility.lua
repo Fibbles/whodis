@@ -22,12 +22,12 @@ WHODIS_NS.format_name = format_name
 
 
 -- as above but with the current realm name attached, e.g. Name-RealmName
-local function format_name_full(str)
+local function format_name_current_realm(str)
 	local realm = GetRealmName():gsub("%s+", "") -- remove spaces for multiword realm names
 	return format_name(str) .. "-" .. realm
 end
 
-WHODIS_NS.format_name_full = format_name_full
+WHODIS_NS.format_name_current_realm = format_name_current_realm
 
 
 -- check if a character name has the server name attached
