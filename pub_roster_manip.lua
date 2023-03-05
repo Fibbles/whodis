@@ -8,7 +8,26 @@ if not WHODIS_NS.SLASH then
 	WHODIS_NS.SLASH = {}
 end
 
+
+-- Swaps the wildcard for the target name (or nil if no target)
+-- Returns the input if it is not the wildcard
+local function whodis_swap_wildcard_for_target_name(str)
+
+	if str == "*" then
+		if UnitIsPlayer("target") then
+			return UnitFullName("target")
+		else
+			return nil
+		end
+	else
+		return str
+	end
+end
+
+
 local function whodis_default_or_remove(name)
+
+	name = whodis_swap_wildcard_for_target_name(name)
 
 	if not name then
 		WHODIS_NS.warn_arguments_few()
@@ -52,6 +71,8 @@ alias = "default"
 
 
 local function whodis_set_override(name, note)
+
+	name = whodis_swap_wildcard_for_target_name(name)
 
 	if not name or name == "" then
 		WHODIS_NS.warn_arguments_few()
@@ -100,11 +121,14 @@ arg_str = "CharName Note",
 help = [[Set a custom note.
 If the character is a guildie this will override the default guild note.
 Custom notes are visible to all characters on this account.
-Character name is not case sensitive unless you specify a realm.]]
+Character name is not case sensitive unless you specify a realm.
+The wildcard * can be used instead of a character name to set a note for your current target.]]
 }
 
 
 local function whodis_hide_note(name)
+
+	name = whodis_swap_wildcard_for_target_name(name)
 
 	if not name then
 		WHODIS_NS.warn_arguments_few()

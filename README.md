@@ -28,6 +28,8 @@ The most commonly used commands are listed here, however there are more availabl
 
 Character names are not case sensitive and are assumed to be on your realm. If you specify the realm then the character name and realm are case sensitive.
 
+Passing the wildcard * to a command that expects a character name will cause it to use the name of your current target.
+
 `/whodis`
 - Opens the GUI
 
