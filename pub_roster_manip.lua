@@ -15,7 +15,13 @@ local function whodis_swap_wildcard_for_target_name(str)
 
 	if str == "*" then
 		if UnitIsPlayer("target") then
-			return UnitFullName("target")
+			local name, realm = UnitFullName("target")
+
+			if not realm then
+				realm = WHODIS_NS.get_normalised_realm_name()
+			end
+
+			return name .. "-" .. realm
 		else
 			return nil
 		end
