@@ -21,10 +21,18 @@ end
 WHODIS_NS.format_name = format_name
 
 
+-- Can't use the built-in GetNormalizedRealmName as it initially returns nil until the PLAYER_LOGIN event 
+-- This is too late for some of the addon initialisation
+local function get_normalised_realm_name()
+	return GetRealmName():gsub("%s+", "") -- remove spaces for multiword realm names
+end
+
+WHODIS_NS.get_normalised_realm_name = get_normalised_realm_name
+
+
 -- as above but with the current realm name attached, e.g. Name-RealmName
 local function format_name_current_realm(str)
-	local realm = GetRealmName():gsub("%s+", "") -- remove spaces for multiword realm names
-	return format_name(str) .. "-" .. realm
+	return format_name(str) .. "-" .. get_normalised_realm_name()
 end
 
 WHODIS_NS.format_name_current_realm = format_name_current_realm

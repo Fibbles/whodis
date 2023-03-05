@@ -166,7 +166,7 @@ local function whodis_generate_fuzzy_character_lookup()
 	-- there will be collisions in this db with characters of the same name from different realms
 	-- they shouldn't occur very often within the same guild though, so the benefits outweigh the downsides
 
-	local _, player_realm = strsplit("-", WHODIS_NS.CURRENT_PLAYER_CHARACTER)
+	local player_realm = WHODIS_NS.get_normalised_realm_name()
 
 	WHODIS_NS.FUZZY_CHARACTER_LOOKUP_DB = {}
 
