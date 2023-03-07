@@ -86,7 +86,7 @@ local function whodis_note_filter(bool_str)
 
 	if bool ~= nil then
 		WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER = bool
-		WHODIS_NS.msg_generic("Filtering of 'alt' and 'main' from the end of guild notes set to '" .. tostring(bool) .. "'.")
+		WHODIS_NS.msg_generic("Filtering of 'alt' and 'main' from the beginning and end of guild notes set to '" .. tostring(bool) .. "'.")
 		WHODIS_NS.build_roster(true)
 	end
 end
@@ -94,7 +94,7 @@ end
 WHODIS_NS.SLASH["note-filter"] = {
 func = whodis_note_filter,
 arg_str = "True/False",
-help = "If set to true, the addon will remove variations of 'alt' and 'main' from the end of guild notes."
+help = "If set to true, the addon will remove variations of 'alt' and 'main' from the beginning and end of guild notes."
 }
 
 

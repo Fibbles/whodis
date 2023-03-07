@@ -21,7 +21,7 @@ local function whodis_poll_guild_roster(silent)
 	-- this may be an issue on the addon's first run 
 	C_GuildInfo.GuildRoster()
 
-	local num_members = GetNumGuildMembers()
+	local num_members = GetNumGuildMembers() or 0
 	
 	if num_members ~= 0 then 
 		WHODIS_NS.GUILD_ROSTER_LOADED = true
@@ -29,6 +29,14 @@ local function whodis_poll_guild_roster(silent)
 	
 	for iii = 1, num_members do
 		local name, rank, _, _, _, _, note, _, _, _, class = GetGuildRosterInfo(iii)
+
+		-- weird bugfix
+		-- all of these fields should contain something or be an empty string
+		-- however if you log in and then zone into an instance quickly GetNumGuildMembers returns a number but GetGuildRosterInfo returns nil values
+		if not name or not rank or not note or not class then
+			WHODIS_NS.warn_generic("Failed to parse the guild roster. Client returned invalid data.")
+			return
+		end
 
 		-- dont waste space storing blank notes
 		local guild_note = WHODIS_NS.trim(note)
