@@ -14,6 +14,18 @@ WHODIS_NS.FORMATTED_NOTE_DB = {}
 WHODIS_NS.FUZZY_CHARACTER_LOOKUP_DB = {}
 
 
+local function whodis_nil_if_empty(note)
+	
+	local clean_note = WHODIS_NS.trim(note)
+
+	if clean_note == "" then
+		return nil
+	else
+		return clean_note
+	end
+end
+
+
 local function whodis_poll_guild_roster(silent)
 		
 	-- ensure the local cache is populated, triggers a GUILD_ROSTER_UPDATE
@@ -39,10 +51,7 @@ local function whodis_poll_guild_roster(silent)
 		end
 
 		-- dont waste space storing blank notes
-		local guild_note = WHODIS_NS.trim(note)
-		if guild_note == "" then
-			guild_note = nil
-		end
+		local guild_note = whodis_nil_if_empty(note)
 				
 		-- keys are case sensitive
 		-- names include server name "Player-Server"
@@ -141,10 +150,9 @@ local function whodis_is_filtered_as_player_char(name)
 end
 
 
--- skips checks for speed. not to be used with user input
-local function whodis_fuzzy_lookup_full_name_unsafe(name)
+local function whodis_fuzzy_lookup_full_name(name)
 
-	if WHODIS_NS.name_has_realm(name) then
+	if not name or name == "" or WHODIS_NS.name_has_realm(name) then
 		return name
 	else
 		local lookup_name = WHODIS_NS.FUZZY_CHARACTER_LOOKUP_DB[WHODIS_NS.format_name(name)]
@@ -152,18 +160,6 @@ local function whodis_fuzzy_lookup_full_name_unsafe(name)
 		-- lookup may fail if the name is not in the fuzzy db. have to assume the character is on our current realm in that case
 		return lookup_name or WHODIS_NS.format_name_current_realm(name)
 	end
-end
-
-WHODIS_NS.fuzzy_lookup_full_name_unsafe = whodis_fuzzy_lookup_full_name_unsafe
-
-
-local function whodis_fuzzy_lookup_full_name(name)
-
-	if not name or name == "" then
-		return name
-	end
-		
-	return whodis_fuzzy_lookup_full_name_unsafe(name)
 end
 
 WHODIS_NS.fuzzy_lookup_full_name = whodis_fuzzy_lookup_full_name

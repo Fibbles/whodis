@@ -7,10 +7,17 @@ local ADDON_NAME, WHODIS_NS = ...
 
 local function whodis_safe_get_formatted_note(name)
 
-	-- Blizzard is inconsistent about passing realm names as part of author names in chat filters
+	-- Blizzard is inconsistent about passing realm names as part of author names in tooltips and chat filters
+	-- If the character is on the same realm as the player, the realm name is omitted.
+	-- Because we only ever need to add in the player's realm, we can avoid a more expensive fuzzy lookup
 	-- Roster lookups need a realm name so this function works around that behaviour
 
-	return WHODIS_NS.FORMATTED_NOTE_DB[WHODIS_NS.fuzzy_lookup_full_name_unsafe(name)]
+	if WHODIS_NS.name_has_realm(name) then
+		return WHODIS_NS.FORMATTED_NOTE_DB[name]
+	else
+		--WHODIS_NS.warn_generic(name .. "does not contain a realm.")
+		return WHODIS_NS.FORMATTED_NOTE_DB[WHODIS_NS.format_name_current_realm(name)]
+	end
 end
 
 
@@ -92,7 +99,7 @@ GameTooltip:HookScript("OnTooltipSetUnit", function(self)
 		-- unit is mostly 'mouseover' for tooltips but might bear 'raidN' if hovering over raid frames etc
 		local _, unit = self:GetUnit()
 
-		if (not unit or not UnitExists(unit)) then 
+		if (not unit or not UnitExists(unit) or not UnitIsPlayer(unit)) then 
 			return
 		end
 		
