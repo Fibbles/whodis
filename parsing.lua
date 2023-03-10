@@ -202,7 +202,9 @@ local function whodis_generate_formatted_notes()
 
 			local working_note = character_info.override_note or character_info.guild_note
 
-			if WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER then
+			-- dont apply note filters to custom notes
+			-- presumably you want to see anything you put in a custom note
+			if WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER and not character_info.override_note then
 				working_note = whodis_apply_note_filter(working_note)
 			end
 
