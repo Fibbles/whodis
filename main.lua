@@ -29,7 +29,10 @@ local function whodis_convert_db_to_latest()
 
 	WHODIS_NS.VERSION.update_version_number()
 
-	if WHODIS_NS.VERSION.is_less(WHODIS_NS.VERSION.PREVIOUS, 2.0) then
+	local is_less = WHODIS_NS.VERSION.is_less
+	local prev_ver = WHODIS_NS.VERSION.PREVIOUS
+
+	if is_less(prev_ver, "2.0") then
 		-- clean up old settings from 1.x versions of the addon
 		WHODIS_ADDON_DATA.COLOUR_NAMES = nil
 		WHODIS_ADDON_DATA.COLOUR_BRACKETS = nil
@@ -37,7 +40,7 @@ local function whodis_convert_db_to_latest()
 		WHODIS_ADDON_DATA.NOTE_FILTER = nil
 	end
 		
-	if WHODIS_NS.VERSION.is_less(WHODIS_NS.VERSION.PREVIOUS, 2.1) and WHODIS_ADDON_DATA.OVERRIDES then
+	if is_less(prev_ver, "2.1") and WHODIS_ADDON_DATA.OVERRIDES then
 		-- strip any colour codes that may have polluted the overrides db
 		for key, value in pairs(WHODIS_ADDON_DATA.OVERRIDES) do
 			local clean_note = WHODIS_NS.strip_colour_codes_from_str(value)
