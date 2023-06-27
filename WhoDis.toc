@@ -1,4 +1,4 @@
-## Interface: 30401
+## Interface: 30402
 ## Title: Who Dis  |TInterface/Addons/WhoDis/resources/whodis_logo_64:16:16|t
 ## Notes: New alt, who dis? An addon that displays notes alongside character names in chat and tooltips.
 ## Author: Kallisto
