@@ -16,7 +16,7 @@ local function whodis_print_character_db()
 		local output_string = "name: " .. name
 
 		for key, value in pairs(char_info) do
-			output_string = output_string .. " || " .. key .. ": " .. value
+			output_string = output_string .. " || " .. key .. ": " .. tostring(value)
 		end
 
 		print(output_string)
@@ -45,7 +45,7 @@ local function whodis_print_player(name)
 		local output_string = "name: " .. name
 
 		for key, value in pairs(char_info) do
-			output_string = output_string .. " || " .. key .. ": " .. value
+			output_string = output_string .. " || " .. key .. ": " .. tostring(value)
 		end
 
 		WHODIS_NS.msg_generic(output_string)

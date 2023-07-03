@@ -28,15 +28,34 @@ local function whodis_chat_manip(self, event, msg, author, ...)
 	local note = whodis_safe_get_formatted_note(author)
 	
 	if note and note ~= "" then		
-		local msg_mod = nil
 
 		if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
-			msg_mod = "|cffd3d3d3(" .. note .. ")|r: " .. msg
+			note = "|cffd3d3d3(" .. note .. ")|r: "
 		else
-			msg_mod = "(" .. note .. "): " .. msg
+			note = "(" .. note .. "): "
 		end
 
-		return false, msg_mod, author, ...
+		msg = note .. msg
+	end
+
+	return false, msg, author, ...
+end
+
+local function whodis_achievement_manip(self, event, msg, author, ...)
+
+	local note = whodis_safe_get_formatted_note(author)
+	
+	if note and note ~= "" then		
+		
+		local name_link, msg_body = WHODIS_NS.split_first_word_from_str(msg)
+
+		if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
+			note = " |cffd3d3d3(" .. note .. ")|r "
+		else
+			note = " (" .. note .. ") "
+		end
+
+		msg = name_link .. note .. msg_body
 	end
 
 	return false, msg, author, ...
@@ -84,6 +103,8 @@ function WHODIS_NS.register_chat_filters()
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_OFFICER", whodis_chat_manip)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT", whodis_chat_manip)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT_LEADER", whodis_chat_manip)
+
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD_ACHIEVEMENT", whodis_achievement_manip)
 	
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", whodis_login_manip)
 end

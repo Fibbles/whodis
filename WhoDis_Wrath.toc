@@ -2,7 +2,7 @@
 ## Title: Who Dis  |TInterface/Addons/WhoDis/resources/whodis_logo_64:16:16|t
 ## Notes: New alt, who dis? An addon that displays notes alongside character names in chat and tooltips.
 ## Author: Kallisto
-## Version: 2.5
+## Version: 2.6
 ## SavedVariables: WHODIS_ADDON_DATA
 
 slash.lua
