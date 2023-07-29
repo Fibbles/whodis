@@ -98,6 +98,30 @@ help = "If set to true, the addon will remove variations of 'alt' and 'main' fro
 }
 
 
+local function whodis_note_filter_custom(pattern_str)
+
+	if pattern_str and pattern_str ~= "" then
+		WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER_CUSTOM = pattern_str
+		WHODIS_NS.msg_generic("Guild notes are now being filtered with the custom pattern: " .. pattern_str)
+	else
+		WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER_CUSTOM = nil
+		WHODIS_NS.msg_generic("Custom note filter disabled.")
+	end
+
+	WHODIS_NS.build_roster(true)
+end
+
+WHODIS_NS.SLASH["note-filter-custom"] = {
+func = whodis_note_filter_custom,
+arg_str = "Lua-Pattern",
+help = [[Set a custom note filter. This is a feature intended only for advanced users.
+The filter can be used in addition to or instead of the built-in note filter.
+If the default filter is used, the custom filter will be run second.
+Accepts Lua patterns. Set a blank/empty pattern to disable.
+Details on Lua patterns can be found at: https://www.lua.org/manual/5.1/manual.html#5.4.1]]
+}
+
+
 local function whodis_colour_names(bool_str)
 
 	local bool = bool_str_parser(bool_str)

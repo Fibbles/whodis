@@ -97,6 +97,18 @@ local function whodis_apply_note_filter(note)
 end
 
 
+local function whodis_apply_note_filter_custom(note)
+
+	-- notes are already trimmed
+	if note and note ~= "" then
+		
+		note = gsub(note, WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER_CUSTOM, "")
+	end
+
+	return note
+end
+
+
 local function whodis_colour_note_with_main_class(note, main_char)
 
 	if not note or note == "" or not main_char or main_char == "" then
@@ -204,8 +216,15 @@ local function whodis_generate_formatted_notes()
 
 			-- dont apply note filters to custom notes
 			-- presumably you want to see anything you put in a custom note
-			if WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER and not character_info.override_note then
-				working_note = whodis_apply_note_filter(working_note)
+			if not character_info.override_note then
+
+				if WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER then
+					working_note = whodis_apply_note_filter(working_note)
+				end
+
+				if WHODIS_ADDON_DATA.SETTINGS.NOTE_FILTER_CUSTOM then
+					working_note = whodis_apply_note_filter_custom(working_note)
+				end
 			end
 
 			if WHODIS_ADDON_DATA.SETTINGS.COLOUR_NAMES then 
