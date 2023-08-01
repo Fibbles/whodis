@@ -6,6 +6,8 @@ local ADDON_NAME, WHODIS_NS = ...
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
 local LibSerialize = LibStub:GetLibrary("LibSerialize")
 
+---@diagnostic disable: undefined-field
+
 
 -- Encoding
 
