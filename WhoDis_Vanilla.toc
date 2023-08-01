@@ -9,14 +9,14 @@ libs\LibStub\LibStub.lua
 libs\LibDeflate\lib.xml
 libs\LibSerialize\lib.xml
 
-slash.lua
-parsing.lua
-display.lua
-utility.lua
-messages.lua
-version.lua
-encode.lua
+core\parsing.lua
+core\display.lua
+core\utility.lua
+core\version.lua
+core\encode.lua
 
+cli\slash.lua
+cli\messages.lua
 cli\debug_print.lua
 cli\help.lua
 cli\options.lua
@@ -24,5 +24,6 @@ cli\roster_manipulation.lua
 
 gui\main.lua
 gui\settings.lua
+gui\import_export.lua
 
-init.lua
+core\init.lua
