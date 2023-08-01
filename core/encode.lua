@@ -100,6 +100,11 @@ end
 
 -- Tests
 
+if not WHODIS_NS.SLASH then
+	WHODIS_NS.SLASH = {}
+end
+
+
 local function whodis_test_encode(str)
     local output = WHODIS_NS.encode_for_print(str)
     print(output)
