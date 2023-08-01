@@ -5,12 +5,17 @@
 ## Version: 2.6
 ## SavedVariables: WHODIS_ADDON_DATA
 
+libs\LibStub\LibStub.lua
+libs\LibDeflate\lib.xml
+libs\LibSerialize\lib.xml
+
 slash.lua
 parsing.lua
 display.lua
 utility.lua
 messages.lua
 version.lua
+encode.lua
 pub_debug_print.lua
 pub_help.lua
 pub_options.lua

@@ -150,9 +150,6 @@ local function whodis_create_text_options(parent_frame, anchor_frame, y_offset)
 		btn:SetPoint("LEFT", eb, "RIGHT", x_padding, 0)
 		btn:SetText("Set")
 		btn:SetWidth(80)
-
-		-- dont use the default tooltipText field as it doesn't format correctly
-		--WHODIS_NS.tooltip_helper(btn, struct.command.help)
 	
 		btn:SetScript("OnClick", eb:GetScript("OnEnterPressed"))
 
