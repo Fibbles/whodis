@@ -19,6 +19,5 @@ cli\roster_manipulation.lua
 
 gui\main.lua
 gui\settings.lua
-gui\import_export.lua
 
 core\init.lua
