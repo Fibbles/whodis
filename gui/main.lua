@@ -431,6 +431,10 @@ function WHODIS_NS.create_gui_frames()
 	WHODIS_NS.gui_main_frame = whodis_create_gui_main_frame(nil, x_offset, y_offset, y_section_padding)
 	
 	WHODIS_NS.gui_settings_frame = WHODIS_NS.create_gui_settings_frame(WHODIS_NS.gui_main_frame, x_offset, y_offset, y_section_padding)
+
+	WHODIS_NS.gui_import_frame = WHODIS_NS.create_gui_import_frame(WHODIS_NS.gui_main_frame, x_offset, y_offset, y_section_padding)
+
+	--WHODIS_NS.KethoEditBox_Show("this is a test!")
 end
 
 function WHODIS_NS.open_gui_frame()

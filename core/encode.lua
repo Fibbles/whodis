@@ -98,6 +98,19 @@ function WHODIS_NS.decode_for_chat_channel(encoded_data)
 end
 
 
+-- Packing
+
+function WHODIS_NS.pack_character_db()
+
+    local package = {}
+
+    package.DB_VERSION = WHODIS_ADDON_DATA.DB_VERSION
+    package.CHARACTER_DB = WHODIS_ADDON_DATA.CHARACTER_DB
+
+    return package
+end
+
+
 -- Tests
 
 if not WHODIS_NS.SLASH then
