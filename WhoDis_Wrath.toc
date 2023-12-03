@@ -9,7 +9,6 @@ core\parsing.lua
 core\display.lua
 core\utility.lua
 core\version.lua
-core\encode.lua
 
 cli\slash.lua
 cli\messages.lua
