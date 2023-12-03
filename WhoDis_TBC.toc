@@ -5,16 +5,21 @@
 ## Version: 2.6
 ## SavedVariables: WHODIS_ADDON_DATA
 
-slash.lua
-parsing.lua
-display.lua
-utility.lua
-messages.lua
-version.lua
-pub_debug_print.lua
-pub_help.lua
-pub_options.lua
-pub_roster_manip.lua
-gui_main.lua
-gui_settings.lua
-main.lua
+core\parsing.lua
+core\display.lua
+core\utility.lua
+core\version.lua
+core\encode.lua
+
+cli\slash.lua
+cli\messages.lua
+cli\debug_print.lua
+cli\help.lua
+cli\options.lua
+cli\roster_manipulation.lua
+
+gui\main.lua
+gui\settings.lua
+gui\import_export.lua
+
+core\init.lua
