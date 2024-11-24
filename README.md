@@ -4,7 +4,7 @@
 
 ## What is it?
 
-A small World of Warcraft addon to display notes besides character names in chat and tooltips.
+A small World of Warcraft addon to display notes beside character names in chat and tooltips.
 It will pull information from the guild notes by default but these can be overridden with custom notes.
 The main purpose of this addon is to display your guild's main character names alongside alts.
 However, you can use it to set a custom note against any player, in any guild, on any server.
@@ -13,7 +13,7 @@ However, you can use it to set a custom note against any player, in any guild, o
 ## Limitations
 
 To maintain maximum compatibility with the many chat addons out there, notes are placed into the chat
-body, rather than modifying the sender's name. A side effect of this is that you will see two colons if
+body, rather than modifying the sender's name. As a side effect you will see two colons if
 a character note is displayed, eg:
 
 `[Channel] [CharName]: (Note): message`
@@ -28,7 +28,7 @@ The most commonly used commands are listed here, however there are more availabl
 
 Character names are not case sensitive and are assumed to be on your realm. If you specify the realm then the character name and realm are case sensitive.
 
-Passing the wildcard * to a command that expects a character name will cause it to use the name of your current target.
+Passing the wildcard symbol * to a command that expects a character name will cause it to use the name of your current target.
 
 `/whodis`
 - Opens the GUI
