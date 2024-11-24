@@ -390,7 +390,7 @@ function WHODIS_NS.create_gui_title_header(parent_frame, x_offset, y_offset)
 	local title_label = header_frame:CreateFontString(nil , "BORDER", "GameFontNormalLarge")
 	title_label:SetJustifyH("LEFT")
 	title_label:SetPoint("LEFT", logo_tex, "RIGHT", 10, 0)
-	title_label:SetText("Who Dis") -- ADDON_NAME is not formatted with spaces
+	title_label:SetText(parent_frame.name)
 	
 	return header_frame
 end
@@ -398,7 +398,7 @@ end
 local function whodis_create_gui_main_frame(parent_frame, x_offset, y_offset, y_section_padding)
 
 	local gui_main_frame = CreateFrame("Frame")
-	gui_main_frame.name = "Who Dis"
+	gui_main_frame.name = "Who Dis"  -- ADDON_NAME is not formatted with spaces
 	
 	local title_header = WHODIS_NS.create_gui_title_header(gui_main_frame, x_offset, y_section_padding)
 			
@@ -416,8 +416,6 @@ local function whodis_create_gui_main_frame(parent_frame, x_offset, y_offset, y_
 		WHODIS_NS.update_gui_note_grid(self.note_grid, 1)
 	end)
 	
-	InterfaceOptions_AddCategory(gui_main_frame)
-	
 	return gui_main_frame
 end
 
@@ -428,17 +426,39 @@ function WHODIS_NS.create_gui_frames()
 	local y_offset = -10
 	local y_section_padding = -20
 	
-	WHODIS_NS.gui_main_frame = whodis_create_gui_main_frame(nil, x_offset, y_offset, y_section_padding)
+	local gui_main_frame = whodis_create_gui_main_frame(nil, x_offset, y_offset, y_section_padding)
 	
-	WHODIS_NS.gui_settings_frame = WHODIS_NS.create_gui_settings_frame(WHODIS_NS.gui_main_frame, x_offset, y_offset, y_section_padding)
+	local gui_settings_frame = WHODIS_NS.create_gui_settings_frame(gui_main_frame, x_offset, y_offset, y_section_padding)
+
+	WHODIS_NS.gui_settings_frame = gui_settings_frame
+	WHODIS_NS.gui_main_frame = gui_main_frame
+
+	-- choose between old or new style settings menu
+	-- keeping the old way in the code as it's not clear yet if blizz will update all classic versions to the new settings menu
+	if InterfaceOptions_AddCategory then
+		InterfaceOptions_AddCategory(gui_main_frame)
+		InterfaceOptions_AddCategory(gui_settings_frame)
+	else
+		local category, layout = Settings.RegisterCanvasLayoutCategory(gui_main_frame, gui_main_frame.name)
+		local subcategory, subcategoryLayout = Settings.RegisterCanvasLayoutSubcategory(category, gui_settings_frame, gui_settings_frame.name)
+
+		Settings.RegisterAddOnCategory(category)
+
+		WHODIS_NS.gui_main_category = category
+		WHODIS_NS.gui_settings_subcategory = subcategory
+	end
 end
 
 function WHODIS_NS.open_gui_frame()
 
-	-- https://github.com/Stanzilla/WoWUIBugs/issues/89
-	InterfaceOptionsFrame_OpenToCategory(WHODIS_NS.gui_main_frame)
-	InterfaceOptionsFrame_OpenToCategory(WHODIS_NS.gui_main_frame) 
-	WHODIS_NS.gui_main_frame:Hide()
-	WHODIS_NS.gui_main_frame:Show() -- required to get lists to rebuild, open to category doesn't seem to trigger OnShow
+	if InterfaceOptions_AddCategory then
+		-- https://github.com/Stanzilla/WoWUIBugs/issues/89
+		InterfaceOptionsFrame_OpenToCategory(WHODIS_NS.gui_main_frame)
+		InterfaceOptionsFrame_OpenToCategory(WHODIS_NS.gui_main_frame) 
+		WHODIS_NS.gui_main_frame:Hide()
+		WHODIS_NS.gui_main_frame:Show() -- required to get lists to rebuild, open to category doesn't seem to trigger OnShow
+	else
+		Settings.OpenToCategory(WHODIS_NS.gui_main_category:GetID());
+	end
 end
 

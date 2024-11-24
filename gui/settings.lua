@@ -187,7 +187,5 @@ function WHODIS_NS.create_gui_settings_frame(parent_frame, x_offset, y_offset, y
 	
 	local text_opt_anchor = whodis_create_text_options(gui_settings_frame, advanced_opts_label, y_offset)
 	
-	InterfaceOptions_AddCategory(gui_settings_frame)
-	
 	return gui_settings_frame
 end
