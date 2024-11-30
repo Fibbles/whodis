@@ -70,12 +70,10 @@ local function whodis_create_bool_options(parent_frame, anchor_frame, y_offset)
 	
 	for name, struct in pairs(WHODIS_BOOL_OPTIONS) do
 	
-		local cb = CreateFrame("CheckButton", nil, parent_frame, "InterfaceOptionsCheckButtonTemplate")
+		local cb = CreateFrame("CheckButton", nil, parent_frame, "ChatConfigCheckButtonTemplate")
 		cb:SetPoint("TOPLEFT", left_anchor, anchor_point, x_offset, y_offset)
----@diagnostic disable-next-line: undefined-field
 		cb.Text:SetText(name)
-		cb.tooltipText = name
-		cb.tooltipRequirement = struct.command.help		
+		cb.tooltip = struct.command.help
 		cb:SetChecked(struct.getter()) -- set the initial checked state
 
 		cb:SetScript("OnClick", 
