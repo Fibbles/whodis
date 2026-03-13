@@ -10,7 +10,7 @@ end
 
 function WHODIS_NS.VERSION.update_version_number()
 
-	WHODIS_NS.VERSION.CURRENT = GetAddOnMetadata(ADDON_NAME, "Version") or "1.0.0"
+	WHODIS_NS.VERSION.CURRENT = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version") or "1.0.0"
 	WHODIS_NS.VERSION.PREVIOUS = tostring(WHODIS_ADDON_DATA.DB_VERSION) or "1.0.0"
 
 	-- DB is always watermarked with the current version number of the addon if it is higher

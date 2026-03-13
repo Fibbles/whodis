@@ -23,69 +23,97 @@ end
 
 -- Chat manipulation
 
-local function whodis_chat_manip(self, event, msg, author, ...)
+WHODIS_NS.LINE_ID = nil
 
-	local note = whodis_safe_get_formatted_note(author)
-	
-	if note and note ~= "" then		
+local function whodis_is_duplicate_msg(line_id)
 
-		if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
-			note = "|cffd3d3d3(" .. note .. ")|r: "
-		else
-			note = "(" .. note .. "): "
-		end
-
-		msg = note .. msg
+	if WHODIS_NS.LINE_ID and WHODIS_NS.LINE_ID == line_id then
+		return true
+	else
+		WHODIS_NS.LINE_ID = line_id
+		return false
 	end
-
-	return false, msg, author, ...
 end
 
-local function whodis_achievement_manip(self, event, msg, author, ...)
+local function whodis_chat_manip(self, event, msg, author, language_name, channel_name, player_name2, special_flags,
+									zone_channel_id, channel_index, channel_base_name, language_id, line_id, ...)
 
-	local note = whodis_safe_get_formatted_note(author)
-	
-	if note and note ~= "" then		
+	if not whodis_is_duplicate_msg(line_id) then
+
+		local note = whodis_safe_get_formatted_note(author)
 		
-		local name_link, msg_body = WHODIS_NS.split_first_word_from_str(msg)
-
-		if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
-			note = " |cffd3d3d3(" .. note .. ")|r "
-		else
-			note = " (" .. note .. ") "
-		end
-
-		msg = name_link .. note .. msg_body
-	end
-
-	return false, msg, author, ...
-end
-
-local function whodis_login_manip(self, event, msg, ...)
-
-	local link, data, name = strmatch(msg, "(|Hplayer:(.-)|h%[(.-)%]|h)")
-
-	if link then
-		local note = whodis_safe_get_formatted_note(name)
-		
-		if note and note ~= "" then
-			local search_name = "|h%[" .. name .. "%]|h"
-		
-			local bracket_note = nil
+		if note and note ~= "" then		
 
 			if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
-				bracket_note = search_name .. " |cffd3d3d3%(" .. note .. "%)|r"
+				note = "|cffd3d3d3(" .. note .. ")|r: "
 			else
-				bracket_note = search_name .. " %(" .. note .. "%)"
+				note = "(" .. note .. "): "
 			end
-							
-			local msg_mod = gsub(msg, search_name, bracket_note)
+
+			msg = note .. msg
+		end
+	end
+
+	return false, msg, author, language_name, channel_name, player_name2, special_flags,
+			zone_channel_id, channel_index, channel_base_name, language_id, line_id, ...
+end
+
+local function whodis_achievement_manip(self, event, msg, author, language_name, channel_name, player_name2, special_flags,
+											zone_channel_id, channel_index, channel_base_name, language_id, line_id, ...)
+
+	if not whodis_is_duplicate_msg(line_id) then
+
+		local note = whodis_safe_get_formatted_note(author)
+		
+		if note and note ~= "" then		
 			
-			return false, msg_mod, ...
+			local name_link, msg_body = WHODIS_NS.split_first_word_from_str(msg)
+
+			if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
+				note = " |cffd3d3d3(" .. note .. ")|r "
+			else
+				note = " (" .. note .. ") "
+			end
+
+			msg = name_link .. note .. msg_body
+		end
+	end
+
+	return false, msg, author, language_name, channel_name, player_name2, special_flags,
+			zone_channel_id, channel_index, channel_base_name, language_id, line_id, ...
+end
+
+local function whodis_login_manip(self, event, msg, author, language_name, channel_name, player_name2, special_flags,
+									zone_channel_id, channel_index, channel_base_name, language_id, line_id, ...)
+
+	if not whodis_is_duplicate_msg(line_id) then
+
+		local link, data, name = strmatch(msg, "(|Hplayer:(.-)|h%[(.-)%]|h)")
+
+		if link then
+			local note = whodis_safe_get_formatted_note(name)
+			
+			if note and note ~= "" then
+				local search_name = "|h%[" .. name .. "%]|h"
+			
+				local bracket_note = nil
+
+				if WHODIS_ADDON_DATA.SETTINGS.COLOUR_BRACKETS then
+					bracket_note = search_name .. " |cffd3d3d3%(" .. note .. "%)|r"
+				else
+					bracket_note = search_name .. " %(" .. note .. "%)"
+				end
+								
+				local msg_mod = gsub(msg, search_name, bracket_note)
+				
+				return false, msg_mod, author, language_name, channel_name, player_name2, special_flags,
+						zone_channel_id, channel_index, channel_base_name, language_id, line_id, ...
+			end
 		end
 	end
 	
-	return false, msg, ...
+	return false, msg, author, language_name, channel_name, player_name2, special_flags,
+			zone_channel_id, channel_index, channel_base_name, language_id, line_id, ...
 end
 
 function WHODIS_NS.register_chat_filters()
